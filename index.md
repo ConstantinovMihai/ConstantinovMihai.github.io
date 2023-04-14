@@ -1,5 +1,2 @@
-Here you can say lots of fun things about your site.
-
-Maybe say a some things about yourself.
-
-Or maybe what you plan to blog about.
+This blog contais our blog post about the reproducibility project of the EfficientNetV2 paper. 
+Link to the original paper: https://paperswithcode.com/paper/efficientnetv2-smaller-models-and-faster
