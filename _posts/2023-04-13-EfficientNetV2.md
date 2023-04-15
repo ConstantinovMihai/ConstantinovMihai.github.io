@@ -134,7 +134,147 @@ As numerous attempts to fix those issues were unsuccessful, the tensorflow imple
 
 ## Reproduction in PyTorch
 
+Due to the impact EfficientNetv2 family had in the computer vision community, the torchvision package has an implementation in Pytorch library of the model. We tried using it for the ablation studies and for the new data set, by creating a training loop. Our efforts are documented in this section. 
+
 ### Description of PyTorch Implementation
+
+Firstly, the datasets are obtaied from torchvision's dataset and loaded in the program. For instance, FashionMNIST is loaded as follows:
+
+```ruby
+train_dataset = FashionMNIST(root='./data', train=True, download=True, transform=transform)
+test_dataset = FashionMNIST(root='./data', train=False, download=True, transform=transform)
+```
+
+For the sake of visualisation, the following snippet loads FashionMNIST data set and plots several instances from the second and third classes, as can be seen in Figure 4:
+
+```ruby
+
+idx = (train_dataset.targets == 1) | (train_dataset.targets == 2)
+train_dataset.data = train_dataset.data[idx]
+train_dataset.targets = train_dataset.targets[idx]
+
+
+idx = (test_dataset.targets == 1) | (test_dataset.targets == 2)
+test_dataset.data = test_dataset.data[idx]
+test_dataset.targets = test_dataset.targets[idx]
+
+
+train_dataset = Subset(train_dataset, range(16))
+test_dataset = Subset(train_dataset, range(16))
+
+
+# Create data loaders
+train_loader = DataLoader(train_dataset, batch_size=8, shuffle=False)
+test_loader = DataLoader(train_dataset, batch_size=8, shuffle=False)
+
+
+labels_map = {
+    0: "T-Shirt",
+    1: "Trouser",
+    2: "Pullover",
+    3: "Dress",
+    4: "Coat",
+    5: "Sandal",
+    6: "Shirt",
+    7: "Sneaker",
+    8: "Bag",
+    9: "Ankle Boot",
+}
+figure = plt.figure(figsize=(9, 9))
+cols, rows = 3, 3
+for i in range(1, cols * rows + 1):
+    sample_idx = i
+    img, label = train_dataset[sample_idx]
+    figure.add_subplot(rows, cols, i)
+    plt.title(labels_map[label])
+    plt.axis("off")
+    plt.imshow(img.squeeze(), cmap="gray")
+plt.show()
+```
+
+
+| ![image](https://user-images.githubusercontent.com/97915789/232250211-f7e65d08-a003-413d-b38b-680e8bf6c8e0.png)|
+|:--:| 
+| **Figure 4. FashionMNIST instances.** |
+
+To make images from different datasets compatible wih the EfficientNetV2 class, a trasform has to be applied. For instance, to resize the image and increase the number of channels the following snippet might be used:
+
+```ruby
+# Define the transformation pipeline
+transform = transforms.Compose([
+    transforms.Resize(224), # resize the image to 224x224
+    transforms.Grayscale(num_output_channels=3), # convert the image to RGB format
+    transforms.ToTensor(), # convert the image to a PyTorch tensor
+])
+```
+
+The tranform might be used directly by the DataLoader.
+
+Loading the model from torchvision's library is done as follows:
+```ruby
+from torchvision.models import efficientnet_v2_s
+
+# Define the EfficientNet_V2_S model
+model = efficientnet_v2_s()
+```
+To prepare the training loop, a loss criterion, based on Cross Entropy (as FashionMNIST is a classification task), learning rate, optimizer (Adam is chosen for this task, due to its popularity and good properties), and a scheduler for the weight decay are defined:
+
+```ruby
+# Define the loss function
+criterion = nn.CrossEntropyLoss()
+lr = 0.005
+# Define the optimizer
+optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=0)
+scheduler = lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.1)
+```
+
+Finally, the training loop is defined by choosing the number of epochs, iterating among the batches, initialising the gradients to zero, performing the forward pass, and then the backward pass and updating the weigths based on the Adam optimizer. The training loss is computed. Moreover, in parallel and without performing the backward propagation step, the forward pass on validation data is used to compute the vaidation loss and accuracy.
+
+```ruby
+# Train the model
+num_epochs = 100
+
+for epoch in range(num_epochs):
+    train_loss = 0.0
+    train_correct = 0.0
+
+
+    for batch_idx, (data, target) in enumerate(train_loader):
+        optimizer.zero_grad()
+        output = model(data)
+        loss = criterion(output, target)
+        loss.backward()
+  
+        optimizer.step()
+       
+        # Update statistics
+        train_loss += loss.item()
+        _, predicted = torch.max(output.data, 1)
+        train_correct += (predicted == target).sum().item()
+
+    # Calculate statistics for the validation set
+    model.eval()
+    val_loss = 0.0
+    val_correct = 0.0
+
+    with torch.no_grad():
+        for batch_idx, (data, target) in enumerate(test_loader):
+            output = model(data)
+            loss = criterion(output, target)
+            
+            # Update statistics
+            val_loss += loss.item()
+            _, predicted = torch.max(output.data, 1)
+            val_correct += (predicted == target).sum().item()
+
+    # Print the training and validation statistics for the epoch
+    train_loss /= len(train_loader.dataset)
+    train_acc = 100.0 * train_correct / len(train_loader.dataset)
+    val_loss /= len(test_loader.dataset)
+    val_acc = 100.0 * val_correct / len(test_loader.dataset)
+    
+    print(f'Epoch {epoch+1}/{num_epochs}, Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%, Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%')
+```
 
 ### Training ImageNetTE
 
