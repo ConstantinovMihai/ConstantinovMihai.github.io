@@ -1,6 +1,29 @@
 # EfficientNetV2 Reproducibility project
 
-## Introduction
+
+## Introduction and theoretical background
+
+EfficientNetV2: Smaller Models and Faster Training is a paper published in 2021 by M. Tan and Q.V. Le, researchers at Google, and introduces a  new family of convolutional networks called EfficientNetV2. It builds on top of the original EfficientNetV1 architecture, which achieved state-of-the-art performance in several computer vision tasks. To develop these models, the authors introduced a combination of training-aware neural architecture search and scaling (NAS), as well as adaptive regularisation and a new building block called Fused-MBConv. They manage to achieve higher accuracy than the state-of-the-art models while training significantly faster and using 6.8 times fewer parameters.   
+
+As this paper introduced such a powerful architecture, the goal of this blog post is to briefly present the paper, as well as our attempt to reproduce several claims from the paper, as well as some ablation studies, to test the impact of the adaptive regularization and the new building block MBFused. 
+
+Thus, the main contributions of the paper are the introduction of the new family EfficientNetV2, which by clever scaling and training aware NAS outperforms previous models in terms of training speed and memory requirements; a new method of progressive learning, which adjusts the regularization and the image size during training, which speeds up training and improves accuracy simultaneously. Lastly, the researchers performed experiments to prove their new model beats the state of the art on a number of computer vision tasks.
+
+As mentioned, EfficientNetV2 is built on top of the EfficientNet family, which was optimized for FLOPs and parameter efficiency, and constituted the state of the art due to their good trade-off on the accuracy, FLOPs, and parameter efficiency.
+
+A bottleneck of the ImageNet dataset, a very popular computer vision task, is that the large image size makes training very slow. This problem was encountered by us, as described later in the blog post. Before EfficientNetV2, the solution employed was to downsize the training set images. However, the paper explores a new approach, by progressively adjusting during training the image size and the regularisation. 
+
+The authors discuss the fact that depthwise convolutions are slow in early layers, but effective in later stages, which represents a bottleneck for EfficientNet, as it makes extensive use of such architectures. Even though they use fewer FLOPs, they can not fully utilize modern accelerators. In order to address this issue, Fused-MBConv is used instead of the MBConv (pictured below) used in early layers in EfficientNetV2.  
+
+![image](https://user-images.githubusercontent.com/97915789/232247238-5ec3212d-915f-4cee-93c7-22e1907a8375.png)
+
+EfficientNet scaled up all stages equally, which is suboptimal. Instead, EfficientNetV2 makes use of a non-uniform scaling strategy to gradually add more layers to later stages. Moreover, the maximum image size is restricted in order to avoid excessive memory consumption and slow training. NAS search is employed to select design choices such as the kernel sizes, number of layers, or the convolutional operation types (MBConv vs Fusd-MBConv). EfficientNetV2 architecture is presented in the table below. Compared to EfficientNet, it makes extensive use of Fused-MBConv, prefers smaller expansion ratios for MBConv, and prefers smaller kernel size, but adds more layers to compensate for the reduction in the receptive field.
+
+![image](https://user-images.githubusercontent.com/97915789/232247358-04a8a796-e98e-4f8a-838e-765ece0b1fa7.png)
+
+Progressive learning with adaptive regularization is achieved by training the network with smaller images and weak regularization in the early stages of the training, such that the network can learn simple regularisations easily. As training progresses, the image size as well as the regularisation progresses. the pseudo-code is presented below.
+
+![image](https://user-images.githubusercontent.com/97915789/232248170-7f2bde66-0958-4b14-9e31-9e2fad49a78e.png)
 
 ## Reproducibility Tensorflow Implementation
 
