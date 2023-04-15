@@ -20,7 +20,7 @@ In order to implement a new type of dataset, several changes needed to be made t
 The implementation of the new class in the code can be seen below.
 
 ```ruby
-class FashionMNISTInput(ImageNetInput):
+class FashionMNISTInput(CIFAR10Input):
   """Generates input_fn from FashionMNIST files."""
   cfg = copy.deepcopy(CIFAR10Input.cfg)
   cfg.update(
