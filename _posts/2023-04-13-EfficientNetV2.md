@@ -44,7 +44,7 @@ Finally, similarly to the other datasets a training configuration needed to be r
 
 ```ruby
 @ds_register
-class FashionMNISTFt(ImagenetFt):
+class FashionMNISTFt(Cifar10Ft):
   """Finetune fashionmnist configs."""
   cfg = copy.deepcopy(Cifar10Ft.cfg)
   cfg.data.override(dict(ds_name='fashion_mnist'))
