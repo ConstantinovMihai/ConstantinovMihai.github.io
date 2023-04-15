@@ -23,7 +23,7 @@ The authors discuss the fact that depthwise convolutions are slow in early layer
 
 EfficientNet scaled up all stages equally, which is suboptimal. Instead, EfficientNetV2 makes use of a non-uniform scaling strategy to gradually add more layers to later stages. Moreover, the maximum image size is restricted in order to avoid excessive memory consumption and slow training. NAS search is employed to select design choices such as the kernel sizes, number of layers, or the convolutional operation types (MBConv vs Fusd-MBConv). EfficientNetV2 architecture is presented in the table of Figure 2. Compared to EfficientNet, it makes extensive use of Fused-MBConv, prefers smaller expansion ratios for MBConv, and prefers smaller kernel size, but adds more layers to compensate for the reduction in the receptive field.
 
-| ![image](https://user-images.githubusercontent.com/97915789/232248999-9c6736b0-eed4-4613-b345-a13372218e8f.png)| 
+| ![image](https://user-images.githubusercontent.com/97915789/232249289-1f523aed-bd8f-420f-8c9c-f2162d381ae5.png)| 
 |:--:| 
 | **Figure 2: EfficientNetV2-S architecture – MBConv and FusedMBConv blocks are described in Figure 1.** |
 
