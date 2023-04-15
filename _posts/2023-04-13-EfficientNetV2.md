@@ -42,6 +42,8 @@ Progressive learning with adaptive regularization is achieved by training the ne
 
 ### Description of Original Tensorflow Implementation
 
+The original code is made public by the paper's authors, and contain the entire implementation for both the EfficientNet and EfficientNetV2 models. The code is difficult to navigate and understand, as it is not properly documented. Moreover, it has two main files, corresponding to different tensorflow versions. Some parts, such as the adaptive regularisation, seem to be implemented in multiple parts of the code and it is not intuititve where the algorithms presented in the paper are presented. However, the hyperparameters as well as the models can be easily consultued in the hparams.py file. A large number of files containing utility functons, flags, as well as various tests might be of interest for a researcher willing to replicate the code.
+
 ### Implementation of a New Dataset
 
 Several datasets are already implemented in the tensorflow implementation of the EfficientNetV2 model. The datasets implemented are: ImageNet, ImageNet21k, ImageNetTfds, Cifar10, Cifar100, Flowers, TFFlowers and Cars. In order to analyze if the implementation of EfficientNetV2 is adaptable to other datasets as well, an attempt was made to introduce a new dataset: FashionMNIST [[1]](#1). FashionMNIST is a dataset containing 10 different classes of Zalando product types, with in total 60000 testing and 10000 validation examples. They are all provided as grayscaled images with dimensions of 28x28 pixels.
