@@ -1,13 +1,18 @@
 # EfficientNetV2 Reproducibility project
 
 
-## Introduction and theoretical background
+## Introduction
 
-EfficientNetV2: Smaller Models and Faster Training is a paper published in 2021 by M. Tan and Q.V. Le, researchers at Google, and introduces a  new family of convolutional networks called EfficientNetV2. It builds on top of the original EfficientNetV1 architecture, which achieved state-of-the-art performance in several computer vision tasks. To develop these models, the authors introduced a combination of training-aware neural architecture search and scaling (NAS), as well as adaptive regularisation and a new building block called Fused-MBConv. They manage to achieve higher accuracy than the state-of-the-art models while training significantly faster and using 6.8 times fewer parameters.   
+The paper “EfficientNetV2: Smaller Models and Faster Training“ [[1]](#1) was published in 2021 by M. Tan and Q.V. Le, researchers at Google, and introduces a new family of convolutional networks called EfficientNetV2. It builds on top of the original EfficientNetV1 architecture, which achieved state-of-the-art performance in several computer vision tasks. To develop these models, the authors introduced a combination of training-aware neural architecture search and scaling (NAS), as well as adaptive regularisation and a new building block called Fused-MBConv. They manage to achieve higher accuracy than the state-of-the-art models while training significantly faster and using 6.8 times fewer parameters.
 
-As this paper introduced such a powerful architecture, the goal of this blog post is to briefly present the paper, as well as our attempt to reproduce several claims from the paper, as well as some ablation studies, to test the impact of the adaptive regularization and the new building block MBFused. 
+As this paper introduced such a powerful architecture, the goal of this blog post is to briefly present the paper, as well as our attempt to reproduce several claims from the paper, as well as some ablation studies, to test the impact of the adaptive regularization and the new building block MBFused. Initially, it was tried to reproduce the results of the paper as well as to adapt the original code provided by the authors in TensorFlow. However, due to computational complexity and compatibility issues, it was not possible to obtain results with TensorFlow. Therefore, an alternative implementation of the code was created with in PyTorch. Overall, the code and the results however proved to be hard to being reproduced.
 
-Thus, the main contributions of the paper are the introduction of the new family EfficientNetV2, which by clever scaling and training aware NAS outperforms previous models in terms of training speed and memory requirements; a new method of progressive learning, which adjusts the regularization and the image size during training, which speeds up training and improves accuracy simultaneously. Lastly, the researchers performed experiments to prove their new model beats the state of the art on a number of computer vision tasks.
+The blog post is structured as follows: First, the most important achievements of the paper will be presented. Subsequently, the TensorFlow implementation is discussed and the changes to the provided code are presented. After explaining why it was unfortunately not possible to achieve results with the TensorFlow implementation, the implementation in PyTorch is presented and the results obtained are outlined. Finally, a final discussion of the reproducibility of the paper is given.
+ 
+
+## Theoretical Background and Summary of the Paper
+
+The main contributions of the paper [[1]](#1) are the introduction of the new family EfficientNetV2, which by clever scaling and training aware NAS outperforms previous models in terms of training speed and memory requirements; a new method of progressive learning, which adjusts the regularization and the image size during training, which speeds up training and improves accuracy simultaneously. The researchers performed experiments to prove their new model beats the state of the art on a number of computer vision tasks.
 
 As mentioned, EfficientNetV2 is built on top of the EfficientNet family, which was optimized for FLOPs and parameter efficiency, and constituted the state of the art due to their good trade-off on the accuracy, FLOPs, and parameter efficiency.
 
@@ -19,19 +24,19 @@ The authors discuss the fact that depthwise convolutions are slow in early layer
 
 | ![image](https://user-images.githubusercontent.com/97915789/232248614-4509fc17-09d4-47a9-946c-0582c256641b.png)| 
 |:--:| 
-| **Figure 1: Structure of MBConv and Fused-MBConv.**|
+| **Figure 1: Structure of MBConv and Fused-MBConv.** [[1]](#1)|
 
 EfficientNet scaled up all stages equally, which is suboptimal. Instead, EfficientNetV2 makes use of a non-uniform scaling strategy to gradually add more layers to later stages. Moreover, the maximum image size is restricted in order to avoid excessive memory consumption and slow training. NAS search is employed to select design choices such as the kernel sizes, number of layers, or the convolutional operation types (MBConv vs Fusd-MBConv). EfficientNetV2 architecture is presented in the table of Figure 2. Compared to EfficientNet, it makes extensive use of Fused-MBConv, prefers smaller expansion ratios for MBConv, and prefers smaller kernel size, but adds more layers to compensate for the reduction in the receptive field.
 
 | ![image](https://user-images.githubusercontent.com/97915789/232249289-1f523aed-bd8f-420f-8c9c-f2162d381ae5.png)| 
 |:--:| 
-| **Figure 2: EfficientNetV2-S architecture – MBConv and FusedMBConv blocks are described in Figure 1.** |
+| **Figure 2: EfficientNetV2-S architecture – MBConv and FusedMBConv blocks are described in Figure 1.** [[1]](#1) |
 
 Progressive learning with adaptive regularization is achieved by training the network with smaller images and weak regularization in the early stages of the training, such that the network can learn simple regularisations easily. As training progresses, the image size as well as the regularisation increases in order to make learning more difficult. The pseudo-code of the progressive learning algorithm is presented in Figure 3.
 
 | ![image](https://user-images.githubusercontent.com/97915789/232248170-7f2bde66-0958-4b14-9e31-9e2fad49a78e.png)|
 |:--:| 
-| **Figure 3.** |
+| **Figure 3.** [[1]](#1) |
 
 ## Reproducibility Tensorflow Implementation
 
