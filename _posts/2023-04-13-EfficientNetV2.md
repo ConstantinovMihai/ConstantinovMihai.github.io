@@ -20,8 +20,6 @@ A bottleneck of the ImageNet dataset, a very popular computer vision task, is th
 
 The authors discuss the fact that depthwise convolutions are slow in early layers, but effective in later stages, which represents a bottleneck for EfficientNet, as it makes extensive use of such architectures. Even though they use fewer FLOPs, they can not fully utilize modern accelerators. In order to address this issue, Fused-MBConv is used instead of the MBConv (pictured in Figure 1) used in early layers in EfficientNetV2.  
 
-
-
 | ![image](https://user-images.githubusercontent.com/97915789/232248614-4509fc17-09d4-47a9-946c-0582c256641b.png)| 
 |:--:| 
 | **Figure 1: Structure of MBConv and Fused-MBConv.** [[1]](#1)|
@@ -38,11 +36,25 @@ Progressive learning with adaptive regularization is achieved by training the ne
 |:--:| 
 | **Figure 3.** [[1]](#1) |
 
-## Reproducibility Tensorflow Implementation
+## Reproducibility TensorFlow Implementation
 
-### Description of Original Tensorflow Implementation
+Having given a short summary of the paper, in this section the implementation of the paper in TensorFlow will be discussed. Furthermore, it is explained how new datasets can be implemented and how an ablation study could be done. The section ends with an overview of the problems encountered while attempting to run the TensorFlow model.
 
-The original code is made public by the paper's authors, and contain the entire implementation for both the EfficientNet and EfficientNetV2 models. The code is difficult to navigate and understand, as it is not properly documented. Moreover, it has two main files, corresponding to different tensorflow versions. Some parts, such as the adaptive regularisation, seem to be implemented in multiple parts of the code and it is not intuititve where the algorithms presented in the paper are presented. However, the hyperparameters as well as the models can be easily consultued in the hparams.py file. A large number of files containing utility functons, flags, as well as various tests might be of interest for a researcher willing to replicate the code.
+### Description of Original TensorFlow Implementation
+
+The original code [[2]](#2) is made public by the paper's authors, and contain the entire implementation for both the EfficientNet and EfficientNetV2 models. It contains two main files corresponding to the two different tensorflow versions. Unfortunately, the code is difficult to navigate and understand, as it is barely documented. Some parts, such as the adaptive regularisation, seem to be implemented in multiple parts of the code and it is not intuititve where the algorithms presented in the paper are implemented in the code. A large number of files containing utility functions, flags, as well as various tests might be of interest for a researcher willing to replicate the code. 
+
+Three files are however of particular importance for this reproducibility project and will therefore be discussed in more detail. They are the following:
+
+* *main.py*
+* *hparams.py*
+* *datasets.py*
+
+First of all, the file *main.py* contains the main implementation of the training script. It imports the information and settings from all other files in the repository in order to train the selected EfficientNet model on the dataset. It builds the model, includes the loss function with the adaptive regularization and runs both the training and evaluation. This file needs to be run when training the model. Furthermore, it contains flags with which before running for example the dataset configuration, the directory of checkpoints or the chosen model can be defined.
+
+Next, the file *hparams.py* contains all hyperparameters for the model architecture and for the training. They are related to the model, the training, the validation, the dataset used and running everything. They can be changed in the *hparam_str* flag of the file *main.py* or immediately in the hyperparameters file itself. Furthermore, this file can simply be used to get an overview of all chosen hyperparameters.
+
+Finally, the file *datasets.py* is of importance while training the model. In this file, the configurations for all availabe datasets need to be defined. They are used as an input both for the training and for the validation. When defining the configurations, hyperparameters from the file *hparams.py* can possibly be redefined. Those datasets can then be called in the *dataset_cfg* flag of the file *main.py*. In the next subsection, it is discussed in detail how new dataset configurations can be defined.
 
 ### Implementation of a New Dataset
 
@@ -122,7 +134,7 @@ weight_decay = 1
 
 With those two changes, it would be possible to test how training would perform without using adaptive regularization for the progressive learning. The difficulties faced while attempting to train the model, which prevented running the ablation study and the implementation of a new dataset, are described in the following subsection.
 
-### Problems With Tensorflow Implementation
+### Problems With TensorFlow Implementation
 
 As was described in the previous subsection, in this reproducibility project an attempt was made to reproduce the results presented in the paper on the model EfficientNetV2 [[1]](#1), as well as to try implementing a new dataset as well as performing an ablation study by removing adaptive regularization. However, unfortunately, several issues were faced while trying to run the code provided in the paper. They are summarized as follows.
 
@@ -289,8 +301,6 @@ for epoch in range(num_epochs):
 ## Discussion on Reproducibility
 
 ## Conclusion
-
-## Contributions
 
 ## Reference list
 
