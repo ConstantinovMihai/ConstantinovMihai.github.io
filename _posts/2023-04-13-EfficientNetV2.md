@@ -19,13 +19,13 @@ The authors discuss the fact that depthwise convolutions are slow in early layer
 
 | ![image](https://user-images.githubusercontent.com/97915789/232248614-4509fc17-09d4-47a9-946c-0582c256641b.png)| 
 |:--:| 
-| **Figure 1:* *. Structure of MBConv and Fused-MBConv. |
+| **Figure 1: Structure of MBConv and Fused-MBConv.**|
 
 EfficientNet scaled up all stages equally, which is suboptimal. Instead, EfficientNetV2 makes use of a non-uniform scaling strategy to gradually add more layers to later stages. Moreover, the maximum image size is restricted in order to avoid excessive memory consumption and slow training. NAS search is employed to select design choices such as the kernel sizes, number of layers, or the convolutional operation types (MBConv vs Fusd-MBConv). EfficientNetV2 architecture is presented in the table of Figure 2. Compared to EfficientNet, it makes extensive use of Fused-MBConv, prefers smaller expansion ratios for MBConv, and prefers smaller kernel size, but adds more layers to compensate for the reduction in the receptive field.
 
 | ![image](https://user-images.githubusercontent.com/97915789/232248999-9c6736b0-eed4-4613-b345-a13372218e8f.png)| 
 |:--:| 
-| **Figure 2:* *. EfficientNetV2-S architecture – MBConv and FusedMBConv blocks are described in Figure 2 |
+| **Figure 2: EfficientNetV2-S architecture – MBConv and FusedMBConv blocks are described in Figure 1.** |
 
 Progressive learning with adaptive regularization is achieved by training the network with smaller images and weak regularization in the early stages of the training, such that the network can learn simple regularisations easily. As training progresses, the image size as well as the regularisation increases in order to make learning more difficult. The pseudo-code of the progressive learning algorithm is presented in Figure 3.
 
