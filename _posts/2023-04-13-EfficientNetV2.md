@@ -141,7 +141,7 @@ As was described in the previous subsection, in this reproducibility project an 
 In the repository provided (a link to the GitHub repositroy was given in the paper [[1]](#1)), a tutorial was given on how to run the different types of the EfficientNet model with the files provided in the repository. In this tutorial, the model EfficientNet-B0 is finetuned. In a first step, it was therefore tried to run this tutorial. When strictly running what was given in the tutorial, training of the model was initialized and started running. Special attention was given to the Top-1 and Top-5 accuracy. In the first 56 of 781 training epochs, the Top-1 accuracy was observed to stay below 15% and the Top-5 accuracy varied between 45% and 55%, but did not exceed the 55%. It even decreased again for multiple of the epochs. The final line obtained can be seen below.
 
 ```tsql
-56/781 [=>............................] - ETA: 149:30:16 - loss: 3.2239 - acc_top1: 0.1239 - acc_top5: 0.5413
+48/781 [>.............................] - ETA: 151:09:58 - loss: 3.2450 - acc_top1: 0.1208 - acc_top5: 0.5355
 ```
 
 Unfortunately, after running the code for nearly 1 day, it crashed. The computing power of a single computer were seen to not be sufficient to train the model in a reasonable timeframe. Attempts to run it in the Google Cloud were unfortunately not successful. However, the results shown above were not convincing of achieving the same performance as provided in the paper for EfficientNet-B0. In the paper, all accuracies (Top-1 and Top-5) were higher than 78%. The results obtained in the first epochs of finetuning were not suggesting, that similar performances could have been obtained. However, this can be related to the fact that finetuning could not be finished, to an unideal checkpoint or to mistakes made while running the code, even if the tutorial was not altered and just run as given.
@@ -314,29 +314,37 @@ train_dataset = FashionMNIST(root='./data', train=True, download=True, transform
 test_dataset = FashionMNIST(root='./data', train=False, download=True, transform=transform)
 ```
 
-For the sake of visualisation, the following snippet loads FashionMNIST data set and plots several instances from the second and third classes, as can be seen in Figure 4:
+For the sake of visualisation, only two classes from FashionMNIST are plotted. Firsly, selecting the indeces for the second and third class from the targets of the train and test data sets:
 
 ```tsql
-
 idx = (train_dataset.targets == 1) | (train_dataset.targets == 2)
+```
+
+Now, using only the train and test data that has the desired targets using:
+```tsql
 train_dataset.data = train_dataset.data[idx]
 train_dataset.targets = train_dataset.targets[idx]
 
-
-idx = (test_dataset.targets == 1) | (test_dataset.targets == 2)
 test_dataset.data = test_dataset.data[idx]
 test_dataset.targets = test_dataset.targets[idx]
+```
 
-
+Selecting a subset of the entire dataset is done using:
+```tsql
 train_dataset = Subset(train_dataset, range(16))
 test_dataset = Subset(train_dataset, range(16))
+```
 
-
+Data is loaded using a DataLoader, by setting a batch size and the shuffle boolean:
+```tsql
 # Create data loaders
 train_loader = DataLoader(train_dataset, batch_size=8, shuffle=False)
 test_loader = DataLoader(train_dataset, batch_size=8, shuffle=False)
+```
 
+In order to decode the labels to actual clothing pieces, the following dictionary is used:
 
+```tsql
 labels_map = {
     0: "T-Shirt",
     1: "Trouser",
@@ -349,6 +357,11 @@ labels_map = {
     8: "Bag",
     9: "Ankle Boot",
 }
+```
+
+Plotting the FashionMNISt images, to obtain the plots from Figure 3:
+
+```tsql
 figure = plt.figure(figsize=(9, 9))
 cols, rows = 3, 3
 for i in range(1, cols * rows + 1):
