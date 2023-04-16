@@ -464,7 +464,7 @@ The code implementation is based mainly on Pytorch's torchvision package [[7]](#
 ## Reference list
 
 <a id="1">[1]</a> 
-M. Tan and Q.V. Le (2021). 
+M. Tan and Q.V. Le. (2021). 
 EfficientNetV2: Smaller Models and Faster Training.
 *Computing Research Repository, abs/2104.00298*.
 https://doi.org/10.48550/arXiv.2104.00298.
@@ -492,7 +492,7 @@ Retrieved on 16th April 2023 from https://github.com/amaarora/imagenette-ddp/blo
 <a id="6">[6]</a> 
 Z. Lipton & J. Steindhardt. (2018). 
 Troubling trends in machine learning scholarship. 
-arXiv preprint arXiv:1807.03341
+*arXiv preprint arXiv:1807.03341*.
 https://arxiv.org/abs/1807.03341
 
 <a id="7">[7]</a> 
