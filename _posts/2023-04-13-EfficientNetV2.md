@@ -403,13 +403,13 @@ One of the features of EfficientNetV2 architecture especially highlighted by aut
 
 The ablation study is performed for the EfficientNetV2-S model due to its smaller size and thus shorter training times. The sizes of the convolutions and number of layers were not changed, as the primary aim of the ablation study is to verify the effectiveness of Fused-MBConv vs MBConv module architecture. The experiment is performed on the FashionMNIST dataset and using the same part of the whole set as previously. The results of original architecture vs modified one can be seen in the figures below:
 
-| <img width="100%" alt="FMTrainingAccuracy" src="https://user-images.githubusercontent.com/74194871/232315401-cff9ae94-9eb0-4dda-82e1-636f3aa1908d.png">| <img width="100%" alt="FMValidationAccuracy" src="https://user-images.githubusercontent.com/74194871/232315420-109cb863-b23d-4aa5-ad38-f8407140b1db.png">|
+| <img width="100%" alt="FMTrainingAccuracy" src="https://user-images.githubusercontent.com/79273017/232326916-1e1a56cc-1d85-443c-83b3-7e5377d524ee.png">| <img width="100%" alt="FMValidationAccuracy" src="https://user-images.githubusercontent.com/79273017/232326938-ffedd8a2-2fa1-4639-be01-33e1ec146d8d.png">|
 |:--:|:--:| 
-| **Figure 8:** Training accuracy per epoch on FashionMNIST. | **Figure 9:** Validation accuracy per epoch on FashionMNIST.|
+| **Figure 8:** Training loss per epoch on modified network. | **Figure 9:** Training accuracy per epoch on modified network.|
 
-| <img width="100%" alt="FMTrainingLoss" src="https://user-images.githubusercontent.com/74194871/232315447-86736bb8-b1a8-4ec3-9210-22f3e9ff756d.png">| <img width="100%" alt="FMValidationLoss" src="https://user-images.githubusercontent.com/74194871/232315463-0cd9f771-4424-43e6-91f4-e507d25a9856.png">|
+| <img width="100%" alt="FMTrainingLoss" src="https://user-images.githubusercontent.com/79273017/232326961-18b5bb82-8f52-4c97-837a-0c6d8694b623.png">| <img width="100%" alt="FMValidationLoss" src="https://user-images.githubusercontent.com/79273017/232327007-e30aaaaa-3554-457e-8b55-82ee4b8b72a8.png">|
 |:--:|:--:| 
-| **Figure 10:** Training loss per epoch on FashionMNIST. | **Figure 11:** Validation loss per epoch on FashionMNIST.|
+| **Figure 10:** Validation loss per epoch on modified network. | **Figure 11:** Validation accuracy per epoch on modified network.|
 
 The effect of the changes can be seen mostly in the accuracy on the validation data. The modified architecture using MBConv reachers lower accuracy than the original one proposed by the authors. The performance on the training set is within statistial significance. Similarly the losses exhibit similar numbers. The lower accuracy on the validation dataset can indeed be attributed to the choice of the convolution method. This aligns with the authors' findings on the effectiveness of using the Fused-MBConv over MBConv in the early network layers.
 
