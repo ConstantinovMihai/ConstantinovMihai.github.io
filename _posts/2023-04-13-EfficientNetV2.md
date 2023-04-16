@@ -285,21 +285,19 @@ test_dataset = ImageFolder(root='./data/imagenette2-160/val', transform=transfor
 
 Having implemented the ImageNetTE dataset, training was now performed with different dataset and batch sizes. Unfortunately, it was not possible to run it on the entire dataset, as this took more than a night for only one epoch. Therefore, it was decided to train on several subset sizes of the full dataset, in order to understand the influence of the size of the dataset and to draw conclusions from that.
 
-As can be seen in the following figures, different subsets of the dataset ImageNetTE were trained and validated using the model EfficientNetV2-s. The sizes chosen were 64, 128, 256 and 512 images always respectively for training and validation. They were always divided in batches of a size of 32 images. For this example, it was chosen to train the model on 10 epochs due to limitations in time. The results obtained for the training and validation accuracy can be observed in the following Figures 4 and 5 respectively.
+As can be seen in the following figures, different subsets of the dataset ImageNetTE were trained and validated using the model EfficientNetV2-s. The sizes chosen were 64, 128, 256, 512 and 1024 images always respectively for training and validation. For training, all images were devided in 8 batches, whereas for validation only one batch was chosen. For this example, it was chosen to train the model on 4 epochs due to limitations in time. The results obtained for the training and validation accuracy can be observed in the following Figures 4 and 5 respectively.
 
-| <img width="100%" alt="INTETrainingAccuracy" src="https://user-images.githubusercontent.com/74194871/232325097-55220782-c40c-4b73-82b2-f315df388d13.png">| <img width="100%" alt="INTEValidationAccuracy" src="https://user-images.githubusercontent.com/74194871/232325110-2294de9a-219b-41ad-b300-9257d06ad121.png">|
+| <img width="100%" alt="TrainingAccuracy2" src="https://user-images.githubusercontent.com/74194871/232283467-4a430ad9-de52-457d-90b2-b5393929a7eb.png">| <img width="100%" alt="ValidationAccuracy2" src="https://user-images.githubusercontent.com/74194871/232283473-681180c5-bdeb-497e-9c38-351ec567b6b1.png">|
 |:--:|:--:| 
 | **Figure 4:** Training accuracy per epoch on different training dataset sizes. | **Figure 5:** Validation accuracy per epoch on different training dataset sizes.|
 
-As can be seen from the figures above, the training accuracy increases when increasing the number of images in the datasets. For datasets with small number of images (up to 512 images), it always reaches a training accuracy of 100% after some epochs, but that would most probably not be the case when training on the full training dataset. In fact, for larger training dataset sizes the accuracy does not reach 100% anymore. Furthermore, it can be seen that the validation accuracy stays more constant from epoch to epoch, especially for the dataset size of 512, where it has a constant value of 75.59%. However, it can be seen that with increasing validation dataset sizes, accuracy decreases drastically. This could however be avoided probably by using more images for training than for validation.
+As can be seen from the figures above, the training accuracy increases when increasing the number of images in the datasets. For datasets with small number of images (up to 512 images), it always reaches a training accuracy of 100% after some epochs, but that would most probably not be the case when training on the full training dataset. In fact, it is observed that for a training dataset size the maximal accuracy reached is 94.04%. Together with the increasing accuracy of the first epoch, it can be assumed that the accuracy will converge to an accuracy of approximately 80-85%, which is in line with the accuracies mentioned in the paper. Furthermore, it can be seen that the validation accuracy stays constant from epoch to epoch. However, it can be seen that with increasing validation dataset sizes, accuracy decreases drastically. This could however be avoided probably by using more images for training.
 
-Furthermore, it is observed that the training loss as well as the validation loss decreases with increasing dataset sizes. This can be seen in the following Figures 6 and 7. Similarly to the training accuracies, for the training loss in most of the cases it decreases to 0 after a few epochs. For the validation loss the trend is less clear. For the 64 images dataset size it can clearly be seen that it slowly decreases to 0. However, for the other dataset sizes, it always first increases to values higher than 0.1 before then staying constant or decreasing to 0 again.
+Furthermore, it is observed that the training loss as well as the validation loss decreases with increasing dataset sizes. This can be seen in the following Figures 6 and 7. Similarly to the accuracies, now the losses in most of the cases decrease to 0 after a few epochs.
 
-| <img width="100%" alt="INTETrainingLoss" src="https://user-images.githubusercontent.com/74194871/232325186-7fe72e0d-db39-4dd0-b91f-dc8192b29e05.png">| <img width="100%" alt="INTEValidationLoss" src="https://user-images.githubusercontent.com/74194871/232325202-a196b53e-1879-4278-a2f7-3d6723839751.png">|
+| <img width="100%" alt="TrainingLoss2" src="https://user-images.githubusercontent.com/74194871/232283486-35550241-3df6-46a0-8b35-5f9ec0d2659f.png">| <img width="100%" alt="ValidationLoss2" src="https://user-images.githubusercontent.com/74194871/232283499-584f41a6-30e5-465b-9a03-44e70f48ee06.png">|
 |:--:|:--:| 
 | **Figure 6:** Training loss per epoch on different training dataset sizes. | **Figure 7:** Validation loss per epoch on different training dataset sizes.|
-
-The results (especially the increasing loss for higher dataset sizes) suggest that overfitting occurs while training the datasets. This could arrise from the fact that a pretrained model on ImageNet was used in order to train ImageNetTE, which was explained to be a subset of ImageNet [[4]](#4)). Thus, very high accuracies can be achieved. In order to verify if this would not be the case for other datasets and if training results are as expected for other datasets, next training was implementes on FashionMNIST. This will be described in the following subsection.
 
 ### 4.3. Implementation of a New Dataset
 
@@ -384,6 +382,36 @@ The tranform might be used directly by the DataLoader.
 | **Figure 10:** Training loss per epoch on FashionMNIST. | **Figure 11:** Validation loss per epoch on FashionMNIST.|
 
 ### 4.4. Ablation Study
+
+One of the features of EfficientNetV2 architecture especially highlighted by authors is the use of Fused-MBConv module in the earlier layers, rather than MBConv. We perform an ablation study to attempt to verify whether this choice of types of modules with convolutional layers is the source of increase in performance. In the ablation study the layers previously using Fused-MBConv are altered to use MBConv. The changes are made within the model implementation in PyTorch, by altering the lines defining the configuration of the network layers, as seen in the following snippet:
+
+```ruby
+    elif arch.startswith("efficientnet_v2_s"):
+        inverted_residual_setting = [
+            # FusedMBConvConfig(1, 3, 1, 24, 24, 2),
+            # FusedMBConvConfig(4, 3, 2, 24, 48, 4),
+            # FusedMBConvConfig(4, 3, 2, 48, 64, 4),
+            MBConvConfig(1, 3, 1, 24, 24, 2),
+            MBConvConfig(4, 3, 2, 24, 48, 4),
+            MBConvConfig(4, 3, 2, 48, 64, 4),
+            MBConvConfig(4, 3, 2, 64, 128, 6),
+            MBConvConfig(6, 3, 1, 128, 160, 9),
+            MBConvConfig(6, 3, 2, 160, 256, 15),
+        ]
+        last_channel = 1280
+```
+
+The ablation study is performed for the EfficientNetV2-S model due to its smaller size and thus shorter training times. The sizes of the convolutions and number of layers were not changed, as the primary aim of the ablation study is to verify the effectiveness of Fused-MBConv vs MBConv module architecture. The experiment is performed on the FashionMNIST dataset and using the same part of the whole set as previously. The results of original architecture vs modified one can be seen in the figures below:
+
+| <img width="100%" alt="FMTrainingAccuracy" src="https://user-images.githubusercontent.com/74194871/232315401-cff9ae94-9eb0-4dda-82e1-636f3aa1908d.png">| <img width="100%" alt="FMValidationAccuracy" src="https://user-images.githubusercontent.com/74194871/232315420-109cb863-b23d-4aa5-ad38-f8407140b1db.png">|
+|:--:|:--:| 
+| **Figure 8:** Training accuracy per epoch on FashionMNIST. | **Figure 9:** Validation accuracy per epoch on FashionMNIST.|
+
+| <img width="100%" alt="FMTrainingLoss" src="https://user-images.githubusercontent.com/74194871/232315447-86736bb8-b1a8-4ec3-9210-22f3e9ff756d.png">| <img width="100%" alt="FMValidationLoss" src="https://user-images.githubusercontent.com/74194871/232315463-0cd9f771-4424-43e6-91f4-e507d25a9856.png">|
+|:--:|:--:| 
+| **Figure 10:** Training loss per epoch on FashionMNIST. | **Figure 11:** Validation loss per epoch on FashionMNIST.|
+
+The effect of the changes can be seen mostly in the accuracy on the validation data. The modified architecture using MBConv reachers lower accuracy than the original one proposed by the authors. The performance on the training set is within statistial significance. Similarly the losses exhibit similar numbers. The lower accuracy on the validation dataset can indeed be attributed to the choice of the convolution method. This aligns with the authors' findings on the effectiveness of using the Fused-MBConv over MBConv in the early network layers.
 
 ### 4.5. Analysing Comparability to Original Tensorflow Implementation
 
