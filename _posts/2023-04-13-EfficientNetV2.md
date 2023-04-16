@@ -1,7 +1,7 @@
 # EfficientNetV2 Reproducibility project
 
 
-## Introduction
+## 1. Introduction
 
 The paper “EfficientNetV2: Smaller Models and Faster Training“ [[1]](#1) was published in 2021 by M. Tan and Q.V. Le, researchers at Google, and introduces a new family of convolutional networks called EfficientNetV2. It builds on top of the original EfficientNetV1 architecture, which achieved state-of-the-art performance in several computer vision tasks. To develop these models, the authors introduced a combination of training-aware neural architecture search and scaling (NAS), as well as adaptive regularisation and a new building block called Fused-MBConv. They manage to achieve higher accuracy than the state-of-the-art models while training significantly faster and using 6.8 times fewer parameters.
 
@@ -10,7 +10,7 @@ As this paper introduced such a powerful architecture, the goal of this blog pos
 The blog post is structured as follows: First, the most important achievements of the paper will be presented. Subsequently, the TensorFlow implementation is discussed and the changes to the provided code are presented. After explaining why it was unfortunately not possible to achieve results with the TensorFlow implementation, the implementation in PyTorch is presented and the results obtained are outlined. Finally, a final discussion of the reproducibility of the paper is given.
  
 
-## Theoretical Background and Summary of the Paper
+## 2. Theoretical Background and Summary of the Paper
 
 The main contributions of the paper [[1]](#1) are the introduction of the new family EfficientNetV2, which by clever scaling and training aware NAS outperforms previous models in terms of training speed and memory requirements; a new method of progressive learning, which adjusts the regularization and the image size during training, which speeds up training and improves accuracy simultaneously. The researchers performed experiments to prove their new model beats the state of the art on a number of computer vision tasks.
 
@@ -22,25 +22,25 @@ The authors discuss the fact that depthwise convolutions are slow in early layer
 
 | ![image](https://user-images.githubusercontent.com/97915789/232248614-4509fc17-09d4-47a9-946c-0582c256641b.png)| 
 |:--:| 
-| **Figure 1: Structure of MBConv and Fused-MBConv.** [[1]](#1)|
+| **Figure 1:** Structure of MBConv and Fused-MBConv [[1]](#1).|
 
 EfficientNet scaled up all stages equally, which is suboptimal. Instead, EfficientNetV2 makes use of a non-uniform scaling strategy to gradually add more layers to later stages. Moreover, the maximum image size is restricted in order to avoid excessive memory consumption and slow training. NAS search is employed to select design choices such as the kernel sizes, number of layers, or the convolutional operation types (MBConv vs Fusd-MBConv). EfficientNetV2 architecture is presented in the table of Figure 2. Compared to EfficientNet, it makes extensive use of Fused-MBConv, prefers smaller expansion ratios for MBConv, and prefers smaller kernel size, but adds more layers to compensate for the reduction in the receptive field.
 
-| ![image](https://user-images.githubusercontent.com/97915789/232249289-1f523aed-bd8f-420f-8c9c-f2162d381ae5.png)| 
+| **Table 1:** EfficientNetV2-S architecture – MBConv and FusedMBConv blocks are described in Figure 1 [[1]](#1). |
 |:--:| 
-| **Figure 2: EfficientNetV2-S architecture – MBConv and FusedMBConv blocks are described in Figure 1.** [[1]](#1) |
+| ![image](https://user-images.githubusercontent.com/97915789/232249289-1f523aed-bd8f-420f-8c9c-f2162d381ae5.png)| 
 
 Progressive learning with adaptive regularization is achieved by training the network with smaller images and weak regularization in the early stages of the training, such that the network can learn simple regularisations easily. As training progresses, the image size as well as the regularisation increases in order to make learning more difficult. The pseudo-code of the progressive learning algorithm is presented in Figure 3.
 
 | ![image](https://user-images.githubusercontent.com/97915789/232248170-7f2bde66-0958-4b14-9e31-9e2fad49a78e.png)|
 |:--:| 
-| **Figure 3.** [[1]](#1) |
+| **Figure 2:** [[1]](#1). |
 
-## Reproducibility TensorFlow Implementation
+## 3. Reproducibility TensorFlow Implementation
 
 Having given a short summary of the paper, in this section the implementation of the paper in TensorFlow will be discussed. Furthermore, it is explained how new datasets can be implemented and how an ablation study could be done. The section ends with an overview of the problems encountered while attempting to run the TensorFlow model.
 
-### Description of Original TensorFlow Implementation
+### 3.1. Description of Original TensorFlow Implementation
 
 The original code [[2]](#2) is made public by the paper's authors, and contain the entire implementation for both the EfficientNet and EfficientNetV2 models. It contains two main files corresponding to the two different tensorflow versions. Unfortunately, the code is difficult to navigate and understand, as it is barely documented. Some parts, such as the adaptive regularisation, seem to be implemented in multiple parts of the code and it is not intuititve where the algorithms presented in the paper are implemented in the code. A large number of files containing utility functions, flags, as well as various tests might be of interest for a researcher willing to replicate the code. 
 
@@ -56,7 +56,7 @@ Next, the file *hparams.py* contains all hyperparameters for the model architect
 
 Finally, the file *datasets.py* is of importance while training the model. In this file, the configurations for all availabe datasets need to be defined. They are used as an input both for the training and for the validation. When defining the configurations, hyperparameters from the file *hparams.py* can possibly be redefined. Those datasets can then be called in the *dataset_cfg* flag of the file *main.py*. In the next subsection, it is discussed in detail how new dataset configurations can be defined.
 
-### Implementation of a New Dataset
+### 3.2. Implementation of a New Dataset
 
 Several datasets are already implemented in the tensorflow implementation of the EfficientNetV2 model. The datasets implemented are: ImageNet, ImageNet21k, ImageNetTfds, Cifar10, Cifar100, Flowers, TFFlowers and Cars. In order to analyze if the implementation of EfficientNetV2 is adaptable to other datasets as well, an attempt was made to introduce a new dataset: FashionMNIST [[1]](#1). FashionMNIST is a dataset containing 10 different classes of Zalando product types, with in total 60000 testing and 10000 validation examples. They are all provided as grayscaled images with dimensions of 28x28 pixels.
 
@@ -102,7 +102,7 @@ class FashionMNISTFt(Cifar10Ft):
 
 As the dataset of FashionMNIST is already implemented in tensorflow, those changes should be sufficient in order to implement this new dataset for EfficientNetV2. The old file *datasets.py* was thus then replaced by the new file containing the new implementations for FashionMNIST. 
 
-### Possible Ablation Study
+### 3.3. Possible Ablation Study
 
 Next, an ablation study was supposed to be performed. As introduced in the article, an improvement in this new model was the progressive learning using an adaptive regularization. The image size was adpted in line 468 to 475 of the file *main.py*. To be very precise, the computations required were performed in line 472 to 474 and are shown as follows [[2]](#2).
 
@@ -134,7 +134,7 @@ weight_decay = 1
 
 With those two changes, it would be possible to test how training would perform without using adaptive regularization for the progressive learning. The difficulties faced while attempting to train the model, which prevented running the ablation study and the implementation of a new dataset, are described in the following subsection.
 
-### Problems With TensorFlow Implementation
+### 3.4. Problems With TensorFlow Implementation
 
 As was described in the previous subsection, in this reproducibility project an attempt was made to reproduce the results presented in the paper on the model EfficientNetV2 [[1]](#1), as well as to try implementing a new dataset as well as performing an ablation study by removing adaptive regularization. However, unfortunately, several issues were faced while trying to run the code provided in the paper. They are summarized as follows.
 
@@ -146,11 +146,11 @@ Next to that, it was also attempted to run different models, notably EfficientNe
 
 As numerous attempts to fix those issues were unsuccessful, the tensorflow implementation could unfortunately not be run. In consequence, an attempt was made to reproduce some results while setting up an implementation using PyTorch. This will be presented in the following section.
 
-## Reproduction in PyTorch
+## 4. Reproduction in PyTorch
 
 Due to the impact EfficientNetv2 family had in the computer vision community, the torchvision package has an implementation in Pytorch library of the model. We tried using it for the ablation studies and for the new data set, by creating a training loop. Our efforts are documented in this section. 
 
-### Description of PyTorch Implementation
+### 4.1. Description of PyTorch Implementation
 
 Firstly, the datasets are obtaied from torchvision's dataset and loaded in the program. For instance, FashionMNIST is loaded as follows:
 
@@ -209,7 +209,7 @@ plt.show()
 
 | ![image](https://user-images.githubusercontent.com/97915789/232250211-f7e65d08-a003-413d-b38b-680e8bf6c8e0.png)|
 |:--:| 
-| **Figure 4. FashionMNIST instances.** |
+| **Figure 3:** FashionMNIST instances. |
 
 To make images from different datasets compatible wih the EfficientNetV2 class, a trasform has to be applied. For instance, to resize the image and increase the number of channels the following snippet might be used:
 
@@ -290,17 +290,58 @@ for epoch in range(num_epochs):
     print(f'Epoch {epoch+1}/{num_epochs}, Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%, Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%')
 ```
 
-### Training ImageNetTE
+### 4.2. Training ImageNetTE
 
-### Implementation of a New Dataset
+In a first step, the model implemented in PyTorch was trained on ImageNetTE. This is the most similar dataset to ImageNet, which was the dataset used in the original paper [[1]](#1)). More precisely, it is a subset containing 10 classes of the original ImageNet dataset [[4]](#4)). As it is not integrated in the PyTorch datasets, the training and validation images were downloaded online [[4]](#4)) and were inserted in the same folder as the Python file for training the EfficientNetV2-s model.
 
-### Ablation Study
+First, in order to be able to use images from a downloaded folder for training the model, the *ImageFolder* training function needed to be imported from torchvision. This was done as follows.
 
-### Analysing Comparability to Original Tensorflow Implementation
+```ruby
+from torchvision.datasets import ImageFolder
+```
 
-## Discussion on Reproducibility
+Next, a transform needed to be defined for this dataset. Inspiration for the transform was taken from [[5]](#5)) which uses the transforms *CenterCrop*, *ToTensor* and *Normalize* to transform the original ImageNetTE images. It can be seen below how the transform was defined.
 
-## Conclusion
+```ruby
+transform = transforms.Compose([
+    transforms.CenterCrop(160),
+    transforms.ToTensor(),
+    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+])
+```
+
+Finally, from the downloaded images, the training and testing dataset needed to be created. This was done as follows, by searching for the images in the download folder and by applying the transform which was defined before.
+
+```ruby
+train_dataset = ImageFolder(root='./data/imagenette2-160/train', transform=transform)
+test_dataset = ImageFolder(root='./data/imagenette2-160/val', transform=transform)
+```
+
+Having implemented the ImageNetTE dataset, training was now performed with different dataset and batch sizes. Unfortunately, it was not possible to run it on the entire dataset, as this took more than a night for only one epoch. Therefore, it was decided to train on several subset sizes of the full dataset, in order to understand the influence of the size of the dataset and to draw conclusions from that.
+
+As can be seen in the following figures, different subsets of the dataset ImageNetTE were trained and validated using the model EfficientNetV2-s. The sizes chosen were 64, 128, 256, 512 and 1024 images always respectively for training and validation. For training, all images were devided in 8 batches, whereas for validation only one batch was chosen. For this example, it was chosen to train the model on 4 epochs due to limitations in time. The results obtained for the training and validation accuracy can be observed in the following Figures 4 and 5 respectively.
+
+| <img width="100%" alt="TrainingAccuracy" src="https://user-images.githubusercontent.com/74194871/232259876-19b80af1-7256-4263-8063-12ae665d5539.png">| <img width="100%" alt="ValidationAccuracy" src="https://user-images.githubusercontent.com/74194871/232259884-da08ac37-ad5b-455c-8573-80e9d858fecb.png">|
+|:--:|:--:| 
+| **Figure 4:** Training accuracy per epoch on different training dataset sizes. | **Figure 5:** Validation accuracy per epoch on different training dataset sizes.|
+
+As can be seen from the figures above, the training accuracy increases when increasing the number of images in the datasets. Due to the small number of images, it always reaches a training accuracy of 100% after some epochs, but that would most probably not be the case when training on the full training dataset. Furthermore, it can be seen that the validation accuracy stays constant from epoch to epoch.
+
+Furthermore, it is observed that the training loss as well as the validation loss decreases with increasing dataset sizes. This can be seen in the following Figures 6 and 7. Similarly to the accuracies, now the losses in most of the cases decrease to 0 after a few epochs.
+
+| <img width="100%" alt="TrainingLoss" src="https://user-images.githubusercontent.com/74194871/232259894-18ffcf54-d742-4201-88cd-78a971be037c.png">| <img width="100%" alt="ValidationLoss" src="https://user-images.githubusercontent.com/74194871/232259898-2fd4ff71-00ec-4994-b40c-564a99ead524.png">|
+|:--:|:--:| 
+| **Figure 6:** Training loss per epoch on different training dataset sizes. | **Figure 7:** Validation loss per epoch on different training dataset sizes.|
+
+### 4.3. Implementation of a New Dataset
+
+### 4.4. Ablation Study
+
+### 4.5. Analysing Comparability to Original Tensorflow Implementation
+
+## 5. Discussion on Reproducibility
+
+## 6. Conclusion
 
 ## Reference list
 
@@ -319,3 +360,13 @@ Retrieved on 15th April 2023 from https://github.com/google/automl/tree/master/e
 Zalando Research. (2022). 
 Fashion-MNIST. 
 Retrieved on 15th April 2023 from https://github.com/zalandoresearch/fashion-mnist.
+
+<a id="4">[4]</a> 
+fast.ai. (2022). 
+Imagenette. 
+Retrieved on 16th April 2023 from https://github.com/fastai/imagenette.
+
+<a id="5">[5]</a> 
+Aman Amora. (2021). 
+Distributed Training in PyTorch on ImageNette. 
+Retrieved on 16th April 2023 from https://github.com/amaarora/imagenette-ddp/blob/master/src/config.py.
