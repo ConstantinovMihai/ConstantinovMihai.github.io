@@ -373,11 +373,11 @@ transform = transforms.Compose([
 
 The tranform might be used directly by the DataLoader.
 
-| <img width="100%" alt="FMTrainingAccuracy" src="https://user-images.githubusercontent.com/74194871/232313509-02943db1-03c9-4429-94b3-694a30374ce4.png">| <img width="100%" alt="FMTrainingAccuracy" src="https://user-images.githubusercontent.com/74194871/232313509-02943db1-03c9-4429-94b3-694a30374ce4.png">|
+| <img width="100%" alt="FMTrainingAccuracy" src="https://user-images.githubusercontent.com/74194871/232315401-cff9ae94-9eb0-4dda-82e1-636f3aa1908d.png">| <img width="100%" alt="FMValidationAccuracy" src="https://user-images.githubusercontent.com/74194871/232315420-109cb863-b23d-4aa5-ad38-f8407140b1db.png">|
 |:--:|:--:| 
 | **Figure 8:** Training accuracy per epoch on FashionMNIST. | **Figure 9:** Validation accuracy per epoch on FashionMNIST.|
 
-| <img width="100%" alt="FMTrainingLoss" src="https://user-images.githubusercontent.com/74194871/232313613-ede93a90-5a7b-4702-99e3-aa1ddc15379a.png">| <img width="100%" alt="FMValidationLoss" src="https://user-images.githubusercontent.com/74194871/232313658-f560089a-cc7b-4ffa-9944-338d264a9505.png">|
+| <img width="100%" alt="FMTrainingLoss" src="https://user-images.githubusercontent.com/74194871/232315447-86736bb8-b1a8-4ec3-9210-22f3e9ff756d.png">| <img width="100%" alt="FMValidationLoss" src="https://user-images.githubusercontent.com/74194871/232315463-0cd9f771-4424-43e6-91f4-e507d25a9856.png">|
 |:--:|:--:| 
 | **Figure 10:** Training loss per epoch on FashionMNIST. | **Figure 11:** Validation loss per epoch on FashionMNIST.|
 
