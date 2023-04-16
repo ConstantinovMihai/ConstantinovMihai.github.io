@@ -138,7 +138,7 @@ With those two changes, it would be possible to test how training would perform 
 
 As was described in the previous subsection, in this reproducibility project an attempt was made to reproduce the results presented in the paper on the model EfficientNetV2 [[1]](#1), as well as to try implementing a new dataset as well as performing an ablation study by removing adaptive regularization. However, unfortunately, several issues were faced while trying to run the code provided in the paper. They are summarized as follows.
 
-In the repository provided (a link to the GitHub repositroy was given in the paper [[1]](#1)), a tutorial was given on how to run the different types of the EfficientNet model with the files provided in the repository. In this tutorial, the model EfficientNet-B0 is finetuned. In a first step, it was therefore tried to run this tutorial. When strictly running what was given in the tutorial, training of the model was initialized and started running. Special attention was given to the Top-1 and Top-5 accuracy. In the first 56 of 781 training epochs, the Top-1 accuracy was observed to stay below 15% and the Top-5 accuracy varied between 45% and 55%, but did not exceed the 55%. It even decreased again for multiple of the epochs. The final line obtained can be seen below.
+In the repository provided (a link to the GitHub repositroy was given in the paper [[1]](#1), a tutorial was given on how to run the different types of the EfficientNet model with the files provided in the repository. In this tutorial, the model EfficientNet-B0 is finetuned. In a first step, it was therefore tried to run this tutorial. When strictly running what was given in the tutorial, training of the model was initialized and started running. Special attention was given to the Top-1 and Top-5 accuracy. In the first 56 of 781 training epochs, the Top-1 accuracy was observed to stay below 15% and the Top-5 accuracy varied between 45% and 55%, but did not exceed the 55%. It even decreased again for multiple of the epochs. The final line obtained can be seen below.
 
 ```tsql
 56/781 [=>............................] - ETA: 149:30:16 - loss: 3.2239 - acc_top1: 0.1239 - acc_top5: 0.5413
@@ -262,7 +262,7 @@ Finally, the train and test statistics are printed for the user to check the pro
 
 ### 4.2. Training ImageNetTE
 
-In a first step, the model implemented in PyTorch was trained on ImageNetTE. This is the most similar dataset to ImageNet, which was the dataset used in the original paper [[1]](#1)). More precisely, it is a subset containing 10 classes of the original ImageNet dataset [[4]](#4)). As it is not integrated in the PyTorch datasets, the training and validation images were downloaded online [[4]](#4)) and were inserted in the same folder as the Python file for training the EfficientNetV2-s model.
+In a first step, the model implemented in PyTorch was trained on ImageNetTE. This is the most similar dataset to ImageNet, which was the dataset used in the original paper [[1]](#1)). More precisely, it is a subset containing 10 classes of the original ImageNet dataset [[4]](#4). As it is not integrated in the PyTorch datasets, the training and validation images were downloaded online [[4]](#4) and were inserted in the same folder as the Python file for training the EfficientNetV2-s model.
 
 First, in order to be able to use images from a downloaded folder for training the model, the *ImageFolder* training function needed to be imported from torchvision. This was done as follows.
 
@@ -270,7 +270,7 @@ First, in order to be able to use images from a downloaded folder for training t
 from torchvision.datasets import ImageFolder
 ```
 
-Next, a transform needed to be defined for this dataset. Inspiration for the transform was taken from [[5]](#5)) which uses the transforms *CenterCrop*, *ToTensor* and *Normalize* to transform the original ImageNetTE images. It can be seen below how the transform was defined.
+Next, a transform needed to be defined for this dataset. Inspiration for the transform was taken from [[5]](#5) which uses the transforms *CenterCrop*, *ToTensor* and *Normalize* to transform the original ImageNetTE images. It can be seen below how the transform was defined.
 
 ```tsql
 transform = transforms.Compose([
@@ -307,7 +307,7 @@ The results (especially the increasing loss for higher dataset sizes) suggest th
 
 ### 4.3. Implementation of a New Dataset
 
-As a new dataset, the FashionMNIST was chosen as it is a popular and rather lightweigth model. Firstly, the datasets are obtaied from torchvision's dataset and loaded in the program. For instance, FashionMNIST is loaded as follows:
+As a new dataset, the FashionMNIST was chosen as it is a popular and rather lightweigth model. Firstly, the datasets are obtaied from torchvision's dataset and loaded in the program. For instance, FashionMNIST is loaded as follows (the implementation is inspired from [[7]](#7)):
 
 ```tsql
 train_dataset = FashionMNIST(root='./data', train=True, download=True, transform=transform)
@@ -446,7 +446,7 @@ In conclusion, this project made us realize that merely sharing the code is not 
 
 ## 6. Conclusion
 
-The code implementation is based mainly on Pytorch's torchvision package [[7]](#7)).
+The code implementation is based mainly on Pytorch's torchvision package [[7]](#7).
 
 ## Contributions
 
@@ -496,7 +496,7 @@ arXiv preprint arXiv:1807.03341
 https://arxiv.org/abs/1807.03341
 
 <a id="7">[7]</a> 
-pytorch.org 
+pytorch.org. 
 torchvision. 
-Retrieved on 16th April 2023 from (https://pytorch.org/vision/stable/index.html)
+Retrieved on 16th April 2023 from https://pytorch.org/vision/stable/index.html.
 
