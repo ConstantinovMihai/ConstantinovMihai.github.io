@@ -242,45 +242,83 @@ optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=0)
 scheduler = lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.1)
 ```
 
-Finally, the training loop is defined by choosing the number of epochs, iterating among the batches, initialising the gradients to zero, performing the forward pass, and then the backward pass and updating the weigths based on the Adam optimizer. The training loss is computed. Moreover, in parallel and without performing the backward propagation step, the forward pass on validation data is used to compute the vaidation loss and accuracy.
-
+The training loop is built by, firstly, choosing a number of epochs and iterating for the number of epochs:
 ```ruby
 # Train the model
 num_epochs = 100
 
 for epoch in range(num_epochs):
+```
+
+For each epoch, the training loss and training accuracy are defined:
+```ruby
     train_loss = 0.0
     train_correct = 0.0
+```
 
-
-    for batch_idx, (data, target) in enumerate(train_loader):
+Further, during one epoch we iterate among all the batches, performing a full pass(forward + backward pass). This is done by firstly initialising the gradients to zero:
+```ruby
+       for batch_idx, (data, target) in enumerate(train_loader):
         optimizer.zero_grad()
+```
+
+Afterwards, the forward pass is performed:
+```ruby
         output = model(data)
+```
+The backward pass is performed by firstly computing the loss, and then running the backwards pass:
+```ruby
         loss = criterion(output, target)
         loss.backward()
-  
-        optimizer.step()
-       
-        # Update statistics
+```
+
+Adam uses the gradients computed during the backpropagation step to update the weights:
+```ruby
+      optimizer.step()
+```
+
+The statistics, i.e. the accuracy and loss, for the training set are computed using:
+```ruby
+     # Update statistics
         train_loss += loss.item()
         _, predicted = torch.max(output.data, 1)
         train_correct += (predicted == target).sum().item()
+```
 
-    # Calculate statistics for the validation set
+For each epoch,the test set is used to generate statistics regarding the performance of the training. Similar with the train statistics case, first callind torch.eval() method, and declaring the test accuracy and loss:
+```ruby
+     # Calculate statistics for the validation set
     model.eval()
     val_loss = 0.0
     val_correct = 0.0
+```
 
+Crucially for this step, the backpropagation should not be called, and therefore the forward pass is performed by explicitely telling the program to not compute the gradients:
+
+```ruby
+     # Calculate statistics for the validation set
     with torch.no_grad():
-        for batch_idx, (data, target) in enumerate(test_loader):
+```
+
+Similarly with the training case, data is loaded by batches, and the forward pass is performed:
+
+```ruby
+      for batch_idx, (data, target) in enumerate(test_loader):
             output = model(data)
-            loss = criterion(output, target)
+```
+
+Loss is computed and the statistics are updated:
+```ruby
+      loss = criterion(output, target)
             
             # Update statistics
             val_loss += loss.item()
             _, predicted = torch.max(output.data, 1)
             val_correct += (predicted == target).sum().item()
+```
 
+Finally, the train and test statistics are printed for the user to check the progress of the training:
+```ruby
     # Print the training and validation statistics for the epoch
     train_loss /= len(train_loader.dataset)
     train_acc = 100.0 * train_correct / len(train_loader.dataset)
@@ -341,6 +379,12 @@ Furthermore, it is observed that the training loss as well as the validation los
 
 ## 5. Discussion on Reproducibility
 
+After putting considerable time and effort into attempting to reproduce the EfficientNetV2 paper, one must consider what are the causes of the numerous difficulties encountered during the project. While our inexperience no doubt played a major role in it, we consider that the paper is on the higher end in terms of difficulty of reproducibility even for the more seasoned researcher.
+
+Firstly, the computational resources needed to reproduce the author's results, even when finetuning the model, are out of reach for most people, especially students. Secondly, apart from the tutorial provided in the repository, the code is not documented and one has difficulties navigating and understanding it. Moreover, the original code is written in the TensorFlow framework, parts of which are deprecated, and we encountered numerous compatibility issues between different versions of different libraries. The torch-vision model of EfficientNet circumvents this problem, but no proper documentation is provided for people new in the field to understand how to use it.
+
+In conclusion, this project made us realize that merely sharing the code is not enough to ensure the results are reproducible. Reproducibility is a crucial step to ensure the real value of the results presented in the paper, especially in light of [6]). However, as EfficientNetV2 is a famous family model, probably the latter point is not the case in our situation. Nonetheless, especially for such a seminal paper, we consider it should be more straightforward to at least be able to verify the paper's results.
+
 ## 6. Conclusion
 
 ## Reference list
@@ -370,3 +414,11 @@ Retrieved on 16th April 2023 from https://github.com/fastai/imagenette.
 Aman Amora. (2021). 
 Distributed Training in PyTorch on ImageNette. 
 Retrieved on 16th April 2023 from https://github.com/amaarora/imagenette-ddp/blob/master/src/config.py.
+
+<a id="6">[6]</a> 
+Z. Lipton & J. Steindhardt. (2018). 
+Troubling trends in machine learning scholarship. 
+arXiv preprint arXiv:1807.03341
+https://arxiv.org/abs/1807.03341
+
+
