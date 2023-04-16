@@ -287,7 +287,7 @@ Having implemented the ImageNetTE dataset, training was now performed with diffe
 
 As can be seen in the following figures, different subsets of the dataset ImageNetTE were trained and validated using the model EfficientNetV2-s. The sizes chosen were 64, 128, 256, 512 and 1024 images always respectively for training and validation. For training, all images were devided in 8 batches, whereas for validation only one batch was chosen. For this example, it was chosen to train the model on 4 epochs due to limitations in time. The results obtained for the training and validation accuracy can be observed in the following Figures 4 and 5 respectively.
 
-| <img width="100%" alt="TrainingAccuracy2" src="https://user-images.githubusercontent.com/74194871/232283467-4a430ad9-de52-457d-90b2-b5393929a7eb.png">| <img width="100%" alt="ValidationAccuracy2" src="https://user-images.githubusercontent.com/74194871/232283473-681180c5-bdeb-497e-9c38-351ec567b6b1.png">|
+| <img width="100%" alt="INTETrainingAccuracy" src="https://user-images.githubusercontent.com/74194871/232327384-49e41762-864e-48a5-b502-55830369ebed.png">| <img width="100%" alt="INTEValidationAccuracy" src="https://user-images.githubusercontent.com/74194871/232327415-53dffcde-44d4-4f4c-ab14-aa7c0d5154a4.png">|
 |:--:|:--:| 
 | **Figure 4:** Training accuracy per epoch on different training dataset sizes. | **Figure 5:** Validation accuracy per epoch on different training dataset sizes.|
 
@@ -295,7 +295,7 @@ As can be seen from the figures above, the training accuracy increases when incr
 
 Furthermore, it is observed that the training loss as well as the validation loss decreases with increasing dataset sizes. This can be seen in the following Figures 6 and 7. Similarly to the accuracies, now the losses in most of the cases decrease to 0 after a few epochs.
 
-| <img width="100%" alt="TrainingLoss2" src="https://user-images.githubusercontent.com/74194871/232283486-35550241-3df6-46a0-8b35-5f9ec0d2659f.png">| <img width="100%" alt="ValidationLoss2" src="https://user-images.githubusercontent.com/74194871/232283499-584f41a6-30e5-465b-9a03-44e70f48ee06.png">|
+| <img width="100%" alt="INTETrainingLoss" src="https://user-images.githubusercontent.com/74194871/232327436-cb417b4f-dc2a-4b71-8298-4c9e6edeaf4f.png">| <img width="100%" alt="INTEValidationLoss" src="https://user-images.githubusercontent.com/74194871/232327457-0e754466-7521-4fd1-af59-b5e24a17d99a.png">|
 |:--:|:--:| 
 | **Figure 6:** Training loss per epoch on different training dataset sizes. | **Figure 7:** Validation loss per epoch on different training dataset sizes.|
 
@@ -411,9 +411,7 @@ The ablation study is performed for the EfficientNetV2-S model due to its smalle
 |:--:|:--:| 
 | **Figure 10:** Validation loss per epoch on modified network. | **Figure 11:** Validation accuracy per epoch on modified network.|
 
-The effect of the changes can be seen mostly in the accuracy on the validation data. The modified architecture using MBConv reachers lower accuracy than the original one proposed by the authors. The performance on the training set is within statistial significance. Similarly the losses exhibit similar numbers. The lower accuracy on the validation dataset can indeed be attributed to the choice of the convolution method. This aligns with the authors' findings on the effectiveness of using the Fused-MBConv over MBConv in the early network layers. One feature which can be noted is that the accuracy of original network tends to fluctuate a bit more over the epochs while the modified architecture exhibits a more stable trend. However, it is not fully clear whether that is a contribution of this ablation study. 
-
-To conclude this experiment it was found that the proposed architecture of convolution modules indeed performs better. As all other parameters of the network architecture were kept constant it can be concluded that using Fused-MBConv instead of MBConv is a source of performance gain. However, each convolution module features plenty of parameters which were not changed when altering the module type. It is possible that if parameters such as kernel size or stride would be changed to values better suited for MBConv in the early layers the network could have achieved better performance. Such analysis is suggested for future studies.
+The effect of the changes can be seen mostly in the accuracy on the validation data. The modified architecture using MBConv reachers lower accuracy than the original one proposed by the authors. The performance on the training set is within statistial significance. Similarly the losses exhibit similar numbers. The lower accuracy on the validation dataset can indeed be attributed to the choice of the convolution method. This aligns with the authors' findings on the effectiveness of using the Fused-MBConv over MBConv in the early network layers.
 
 ### 4.5. Analysing Comparability to Original Tensorflow Implementation
 
