@@ -372,6 +372,15 @@ transform = transforms.Compose([
 ```
 
 The tranform might be used directly by the DataLoader.
+
+| <img width="100%" alt="FMTrainingAccuracy" src="https://user-images.githubusercontent.com/74194871/232313509-02943db1-03c9-4429-94b3-694a30374ce4.png">| <img width="100%" alt="FMTrainingAccuracy" src="https://user-images.githubusercontent.com/74194871/232313509-02943db1-03c9-4429-94b3-694a30374ce4.png">|
+|:--:|:--:| 
+| **Figure 8:** Training accuracy per epoch on FashionMNIST. | **Figure 9:** Validation accuracy per epoch on FashionMNIST.|
+
+| <img width="100%" alt="FMTrainingLoss" src="https://user-images.githubusercontent.com/74194871/232313613-ede93a90-5a7b-4702-99e3-aa1ddc15379a.png">| <img width="100%" alt="FMValidationLoss" src="https://user-images.githubusercontent.com/74194871/232313658-f560089a-cc7b-4ffa-9944-338d264a9505.png">|
+|:--:|:--:| 
+| **Figure 10:** Training loss per epoch on FashionMNIST. | **Figure 11:** Validation loss per epoch on FashionMNIST.|
+
 ### 4.4. Ablation Study
 
 ### 4.5. Analysing Comparability to Original Tensorflow Implementation
