@@ -152,7 +152,7 @@ Due to the impact EfficientNetv2 family had in the computer vision community, th
 
 ### 4.1. Description of PyTorch Implementation
 
-Loading the model from torchvision's library is done as follows:
+In this section, a short description of the PyTorch training loop will be given. The explanation on how to load the datasets for training will follow in the subsequent sections. In a first step, loading the model from torchvision's library is done as follows:
 ```ruby
 from torchvision.models import efficientnet_v2_s
 
