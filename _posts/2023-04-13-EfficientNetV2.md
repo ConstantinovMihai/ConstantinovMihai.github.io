@@ -152,78 +152,6 @@ Due to the impact EfficientNetv2 family had in the computer vision community, th
 
 ### 4.1. Description of PyTorch Implementation
 
-Firstly, the datasets are obtaied from torchvision's dataset and loaded in the program. For instance, FashionMNIST is loaded as follows:
-
-```ruby
-train_dataset = FashionMNIST(root='./data', train=True, download=True, transform=transform)
-test_dataset = FashionMNIST(root='./data', train=False, download=True, transform=transform)
-```
-
-For the sake of visualisation, the following snippet loads FashionMNIST data set and plots several instances from the second and third classes, as can be seen in Figure 4:
-
-```ruby
-
-idx = (train_dataset.targets == 1) | (train_dataset.targets == 2)
-train_dataset.data = train_dataset.data[idx]
-train_dataset.targets = train_dataset.targets[idx]
-
-
-idx = (test_dataset.targets == 1) | (test_dataset.targets == 2)
-test_dataset.data = test_dataset.data[idx]
-test_dataset.targets = test_dataset.targets[idx]
-
-
-train_dataset = Subset(train_dataset, range(16))
-test_dataset = Subset(train_dataset, range(16))
-
-
-# Create data loaders
-train_loader = DataLoader(train_dataset, batch_size=8, shuffle=False)
-test_loader = DataLoader(train_dataset, batch_size=8, shuffle=False)
-
-
-labels_map = {
-    0: "T-Shirt",
-    1: "Trouser",
-    2: "Pullover",
-    3: "Dress",
-    4: "Coat",
-    5: "Sandal",
-    6: "Shirt",
-    7: "Sneaker",
-    8: "Bag",
-    9: "Ankle Boot",
-}
-figure = plt.figure(figsize=(9, 9))
-cols, rows = 3, 3
-for i in range(1, cols * rows + 1):
-    sample_idx = i
-    img, label = train_dataset[sample_idx]
-    figure.add_subplot(rows, cols, i)
-    plt.title(labels_map[label])
-    plt.axis("off")
-    plt.imshow(img.squeeze(), cmap="gray")
-plt.show()
-```
-
-
-| ![image](https://user-images.githubusercontent.com/97915789/232250211-f7e65d08-a003-413d-b38b-680e8bf6c8e0.png)|
-|:--:| 
-| **Figure 3:** FashionMNIST instances. |
-
-To make images from different datasets compatible wih the EfficientNetV2 class, a trasform has to be applied. For instance, to resize the image and increase the number of channels the following snippet might be used:
-
-```ruby
-# Define the transformation pipeline
-transform = transforms.Compose([
-    transforms.Resize(224), # resize the image to 224x224
-    transforms.Grayscale(num_output_channels=3), # convert the image to RGB format
-    transforms.ToTensor(), # convert the image to a PyTorch tensor
-])
-```
-
-The tranform might be used directly by the DataLoader.
-
 Loading the model from torchvision's library is done as follows:
 ```ruby
 from torchvision.models import efficientnet_v2_s
@@ -373,6 +301,77 @@ Furthermore, it is observed that the training loss as well as the validation los
 
 ### 4.3. Implementation of a New Dataset
 
+As a new dataset, the FashionMNIST was chosen as it is a popular and rather lightweigth model. Firstly, the datasets are obtaied from torchvision's dataset and loaded in the program. For instance, FashionMNIST is loaded as follows:
+
+```ruby
+train_dataset = FashionMNIST(root='./data', train=True, download=True, transform=transform)
+test_dataset = FashionMNIST(root='./data', train=False, download=True, transform=transform)
+```
+
+For the sake of visualisation, the following snippet loads FashionMNIST data set and plots several instances from the second and third classes, as can be seen in Figure 4:
+
+```ruby
+
+idx = (train_dataset.targets == 1) | (train_dataset.targets == 2)
+train_dataset.data = train_dataset.data[idx]
+train_dataset.targets = train_dataset.targets[idx]
+
+
+idx = (test_dataset.targets == 1) | (test_dataset.targets == 2)
+test_dataset.data = test_dataset.data[idx]
+test_dataset.targets = test_dataset.targets[idx]
+
+
+train_dataset = Subset(train_dataset, range(16))
+test_dataset = Subset(train_dataset, range(16))
+
+
+# Create data loaders
+train_loader = DataLoader(train_dataset, batch_size=8, shuffle=False)
+test_loader = DataLoader(train_dataset, batch_size=8, shuffle=False)
+
+
+labels_map = {
+    0: "T-Shirt",
+    1: "Trouser",
+    2: "Pullover",
+    3: "Dress",
+    4: "Coat",
+    5: "Sandal",
+    6: "Shirt",
+    7: "Sneaker",
+    8: "Bag",
+    9: "Ankle Boot",
+}
+figure = plt.figure(figsize=(9, 9))
+cols, rows = 3, 3
+for i in range(1, cols * rows + 1):
+    sample_idx = i
+    img, label = train_dataset[sample_idx]
+    figure.add_subplot(rows, cols, i)
+    plt.title(labels_map[label])
+    plt.axis("off")
+    plt.imshow(img.squeeze(), cmap="gray")
+plt.show()
+```
+
+
+| ![image](https://user-images.githubusercontent.com/97915789/232250211-f7e65d08-a003-413d-b38b-680e8bf6c8e0.png)|
+|:--:| 
+| **Figure 3:** FashionMNIST instances. |
+
+To make images from different datasets compatible wih the EfficientNetV2 class, a trasform has to be applied. For instance, to resize the image and increase the number of channels the following snippet might be used:
+
+```ruby
+# Define the transformation pipeline
+transform = transforms.Compose([
+    transforms.Resize(224), # resize the image to 224x224
+    transforms.Grayscale(num_output_channels=3), # convert the image to RGB format
+    transforms.ToTensor(), # convert the image to a PyTorch tensor
+])
+```
+
+The tranform might be used directly by the DataLoader.
 ### 4.4. Ablation Study
 
 ### 4.5. Analysing Comparability to Original Tensorflow Implementation
