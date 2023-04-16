@@ -429,6 +429,19 @@ In conclusion, this project made us realize that merely sharing the code is not 
 
 ## 6. Conclusion
 
+## Contributions
+
+|Part of the work|Mihai Constantinov|Christoph Pabsch|Igor Pszczólkowski|
+|:--:|:--:|:--:|:--:|
+|Attempts to Run TensorFlow|X|X|X|
+|Implementation FashionMNIST TensorFlow|X|X||
+|Explanations Problems TensorFlow||X||
+|Setting up PyTorch Training Loop|X|||
+|PyTorch ImageNetTE Implementation & Analysis||X||
+|PyTorch FashionMNIST Implementation & Analysis|X|X||
+|PyTorch Ablation Study|||X|
+|Overall Reproducibility Analysis|X|X|X|
+
 ## Reference list
 
 <a id="1">[1]</a> 
