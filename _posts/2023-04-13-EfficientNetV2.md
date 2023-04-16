@@ -446,6 +446,8 @@ In conclusion, this project made us realize that merely sharing the code is not 
 
 ## 6. Conclusion
 
+The code implementation is based mainly on Pytorch's torchvision package [[7]](#7)).
+
 ## Contributions
 
 |Part of the work|Mihai Constantinov|Christoph Pabsch|Igor Pszczólkowski|
@@ -493,4 +495,8 @@ Troubling trends in machine learning scholarship.
 arXiv preprint arXiv:1807.03341
 https://arxiv.org/abs/1807.03341
 
+<a id="7">[7]</a> 
+pytorch.org 
+torchvision. 
+Retrieved on 16th April 2023 from (https://pytorch.org/vision/stable/index.html)
 
