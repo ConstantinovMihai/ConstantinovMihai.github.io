@@ -69,7 +69,7 @@ In order to implement a new type of dataset, several changes needed to be made t
 
 The implementation of the new class in the code can be seen below.
 
-```ruby
+```tsql
 class FashionMNISTInput(CIFAR10Input):
   """Generates input_fn from FashionMNIST files."""
   cfg = copy.deepcopy(CIFAR10Input.cfg)
@@ -86,13 +86,13 @@ class FashionMNISTInput(CIFAR10Input):
 
 Next, the FashionMNIST dataset also needed to be added to the function *get_dataset_class(ds_name)*, which is calling the class of a dataset in the main file of EfficientNetV2. The entry was added in the same way as for all other datasets by linking the name of the dataset (*fashion_mnist*) to the name of the previously defined new class (*FashionMNISTInput*). The entry added to the function was therefore as shown below.
 
-```ruby
+```tsql
 'fashion_mnist': FashionMNISTInput,
 ```
 
 Finally, similarly to the other datasets a training configuration needed to be registered. This was again done by copying the training configuration *Cifar10Ft.cfg* of Cifar10 to the new class *FashionMNISTFt* for the configuration of FashionMNIST. The configuration data was overwritten with the data which was previously defined in the class of FashionMNIST. This was done as follows.
 
-```ruby
+```tsql
 @ds_register
 class FashionMNISTFt(Cifar10Ft):
   """Finetune fashionmnist configs."""
@@ -106,7 +106,7 @@ As the dataset of FashionMNIST is already implemented in tensorflow, those chang
 
 Next, an ablation study was supposed to be performed. As introduced in the article, an improvement in this new model was the progressive learning using an adaptive regularization. The image size was adpted in line 468 to 475 of the file *main.py*. To be very precise, the computations required were performed in line 472 to 474 and are shown as follows [[2]](#2).
 
-```ruby
+```tsql
 ratio = float(stage + 1) / float(total_stages)
 max_steps = int(ratio * train_steps)
 image_size = int(ibase + (input_image_size - ibase) * ratio)
@@ -114,13 +114,13 @@ image_size = int(ibase + (input_image_size - ibase) * ratio)
 
 The idea was to compare in the ablation study, how training would have performed when fully removing progressive learning with an adaptive regularization. Therefore, the code block shown above would need to be replaced with the one following, in order to have a constant image size. 
 
-```ruby
+```tsql
 image_size = input_image_size
 ```
 
 Next to that, also the adaptive regularization would need to be removed. Regularization was found to also be performed in the file *main.py* from line 126 to 142. Again, some lines in the code were found to be most relevant for the regularization, namely line 129 to 131 defining the weight_decay as follows [[2]](#2).
 
-```ruby
+```tsql
 weight_decay_inc = config.train.weight_decay_inc * (
     tf.cast(global_step, tf.float32) / tf.cast(train_steps, tf.float32))
 weight_decay = (1 + weight_decay_inc) * config.train.weight_decay
@@ -128,7 +128,7 @@ weight_decay = (1 + weight_decay_inc) * config.train.weight_decay
 
 Similaraly to the image size, a new version of those code lines would need to be implemented. The new line of code replacing the lines above and defining the weight decay in a different way in order to remove adaptive regularization would have been the following.
 
-```ruby
+```tsql
 weight_decay = 1
 ```
 
@@ -140,7 +140,7 @@ As was described in the previous subsection, in this reproducibility project an 
 
 In the repository provided (a link to the GitHub repositroy was given in the paper [[1]](#1)), a tutorial was given on how to run the different types of the EfficientNet model with the files provided in the repository. In this tutorial, the model EfficientNet-B0 is finetuned. In a first step, it was therefore tried to run this tutorial. When strictly running what was given in the tutorial, training of the model was initialized and started running. Special attention was given to the Top-1 and Top-5 accuracy. In the first 56 of 781 training epochs, the Top-1 accuracy was observed to stay below 15% and the Top-5 accuracy varied between 45% and 55%, but did not exceed the 55%. It even decreased again for multiple of the epochs. The final line obtained can be seen below.
 
-```ruby
+```tsql
 48/781 [>.............................] - ETA: 151:09:58 - loss: 3.2450 - acc_top1: 0.1208 - acc_top5: 0.5355
 ```
 
@@ -157,7 +157,7 @@ Due to the impact EfficientNetv2 family had in the computer vision community, th
 ### 4.1. Description of PyTorch Implementation
 
 In this section, a short description of the PyTorch training loop will be given. The explanation on how to load the datasets for training will follow in the subsequent sections. In a first step, loading the model from torchvision's library is done as follows:
-```ruby
+```tsql
 from torchvision.models import efficientnet_v2_s
 
 # Define the EfficientNet_V2_S model
@@ -165,7 +165,7 @@ model = efficientnet_v2_s()
 ```
 To prepare the training loop, a loss criterion, based on Cross Entropy (as FashionMNIST is a classification task), learning rate, optimizer (Adam is chosen for this task, due to its popularity and good properties), and a scheduler for the weight decay are defined:
 
-```ruby
+```tsql
 # Define the loss function
 criterion = nn.CrossEntropyLoss()
 lr = 0.005
@@ -175,7 +175,7 @@ scheduler = lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.1)
 ```
 
 The training loop is built by, firstly, choosing a number of epochs and iterating for the number of epochs:
-```ruby
+```tsql
 # Train the model
 num_epochs = 100
 
@@ -183,34 +183,34 @@ for epoch in range(num_epochs):
 ```
 
 For each epoch, the training loss and training accuracy are defined:
-```ruby
+```tsql
     train_loss = 0.0
     train_correct = 0.0
 ```
 
 Further, during one epoch we iterate among all the batches, performing a full pass(forward + backward pass). This is done by firstly initialising the gradients to zero:
-```ruby
+```tsql
        for batch_idx, (data, target) in enumerate(train_loader):
         optimizer.zero_grad()
 ```
 
 Afterwards, the forward pass is performed:
-```ruby
+```tsql
         output = model(data)
 ```
 The backward pass is performed by firstly computing the loss, and then running the backwards pass:
-```ruby
+```tsql
         loss = criterion(output, target)
         loss.backward()
 ```
 
 Adam uses the gradients computed during the backpropagation step to update the weights:
-```ruby
+```tsql
       optimizer.step()
 ```
 
 The statistics, i.e. the accuracy and loss, for the training set are computed using:
-```ruby
+```tsql
      # Update statistics
         train_loss += loss.item()
         _, predicted = torch.max(output.data, 1)
@@ -218,7 +218,7 @@ The statistics, i.e. the accuracy and loss, for the training set are computed us
 ```
 
 For each epoch,the test set is used to generate statistics regarding the performance of the training. Similar with the train statistics case, first callind torch.eval() method, and declaring the test accuracy and loss:
-```ruby
+```tsql
      # Calculate statistics for the validation set
     model.eval()
     val_loss = 0.0
@@ -227,20 +227,20 @@ For each epoch,the test set is used to generate statistics regarding the perform
 
 Crucially for this step, the backpropagation should not be called, and therefore the forward pass is performed by explicitely telling the program to not compute the gradients:
 
-```ruby
+```tsql
      # Calculate statistics for the validation set
     with torch.no_grad():
 ```
 
 Similarly with the training case, data is loaded by batches, and the forward pass is performed:
 
-```ruby
+```tsql
       for batch_idx, (data, target) in enumerate(test_loader):
             output = model(data)
 ```
 
 Loss is computed and the statistics are updated:
-```ruby
+```tsql
       loss = criterion(output, target)
             
             # Update statistics
@@ -250,7 +250,7 @@ Loss is computed and the statistics are updated:
 ```
 
 Finally, the train and test statistics are printed for the user to check the progress of the training:
-```ruby
+```tsql
     # Print the training and validation statistics for the epoch
     train_loss /= len(train_loader.dataset)
     train_acc = 100.0 * train_correct / len(train_loader.dataset)
@@ -266,13 +266,13 @@ In a first step, the model implemented in PyTorch was trained on ImageNetTE. Thi
 
 First, in order to be able to use images from a downloaded folder for training the model, the *ImageFolder* training function needed to be imported from torchvision. This was done as follows.
 
-```ruby
+```tsql
 from torchvision.datasets import ImageFolder
 ```
 
 Next, a transform needed to be defined for this dataset. Inspiration for the transform was taken from [[5]](#5)) which uses the transforms *CenterCrop*, *ToTensor* and *Normalize* to transform the original ImageNetTE images. It can be seen below how the transform was defined.
 
-```ruby
+```tsql
 transform = transforms.Compose([
     transforms.CenterCrop(160),
     transforms.ToTensor(),
@@ -282,7 +282,7 @@ transform = transforms.Compose([
 
 Finally, from the downloaded images, the training and testing dataset needed to be created. This was done as follows, by searching for the images in the download folder and by applying the transform which was defined before.
 
-```ruby
+```tsql
 train_dataset = ImageFolder(root='./data/imagenette2-160/train', transform=transform)
 test_dataset = ImageFolder(root='./data/imagenette2-160/val', transform=transform)
 ```
@@ -309,14 +309,14 @@ The results (especially the increasing loss for higher dataset sizes) suggest th
 
 As a new dataset, the FashionMNIST was chosen as it is a popular and rather lightweigth model. Firstly, the datasets are obtaied from torchvision's dataset and loaded in the program. For instance, FashionMNIST is loaded as follows:
 
-```ruby
+```tsql
 train_dataset = FashionMNIST(root='./data', train=True, download=True, transform=transform)
 test_dataset = FashionMNIST(root='./data', train=False, download=True, transform=transform)
 ```
 
 For the sake of visualisation, the following snippet loads FashionMNIST data set and plots several instances from the second and third classes, as can be seen in Figure 4:
 
-```ruby
+```tsql
 
 idx = (train_dataset.targets == 1) | (train_dataset.targets == 2)
 train_dataset.data = train_dataset.data[idx]
@@ -368,7 +368,7 @@ plt.show()
 
 To make images from different datasets compatible wih the EfficientNetV2 class, a trasform has to be applied. For instance, to resize the image and increase the number of channels the following snippet might be used:
 
-```ruby
+```tsql
 # Define the transformation pipeline
 transform = transforms.Compose([
     transforms.Resize(224), # resize the image to 224x224
@@ -391,7 +391,7 @@ The tranform might be used directly by the DataLoader.
 
 One of the features of EfficientNetV2 architecture especially highlighted by authors is the use of Fused-MBConv module in the earlier layers, rather than MBConv. We perform an ablation study to attempt to verify whether this choice of types of modules with convolutional layers is the source of increase in performance. In the ablation study the layers previously using Fused-MBConv are altered to use MBConv. The changes are made within the model implementation in PyTorch, by altering the lines defining the configuration of the network layers, as seen in the following snippet:
 
-```ruby
+```tsql
     elif arch.startswith("efficientnet_v2_s"):
         inverted_residual_setting = [
             # FusedMBConvConfig(1, 3, 1, 24, 24, 2),
