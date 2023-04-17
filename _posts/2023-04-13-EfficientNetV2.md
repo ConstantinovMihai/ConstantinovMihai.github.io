@@ -446,7 +446,7 @@ In conclusion, this project made us realize that merely sharing the code is not 
 
 ## 6. Conclusion
 
-The code implementation is based mainly on Pytorch's torchvision package [[7]](#7).
+Attempting to run and modify the original tensorflow implementation as well performing experiments with own Pytorch implementation has given us an insight into the proposed architecture and studies proposed by the authors. While experiments on the original tensorflow implementation were mostly unsuccesful it has been a valueable experience on the reproducibility of scientific papers, even when the full code has been released. Our implementation based mostly on the pytorch vision package has allowed us to work with the proposed architecture and evaluate it on new datasets as well as perform an ablation study related to the architecture of the modules. The results obtained on the pytorch model were in line with expectations and did not show any features which would dispute the authors' findings. However, due to the limited reproducibility and constraints on time and computational power more experiments are advised to be performed with the EfficientNetV2 architecture.
 
 ## Contributions
 
