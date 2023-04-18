@@ -1,4 +1,4 @@
-# DRAFT: EfficientNetV2 Reproducibility project
+# EfficientNetV2 Reproducibility project
 
 
 ## 1. Introduction
