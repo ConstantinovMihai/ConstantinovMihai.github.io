@@ -260,7 +260,7 @@ Finally, the train and test statistics are printed for the user to check the pro
     print(f'Epoch {epoch+1}/{num_epochs}, Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%, Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%')
 ```
 
-### 4.2. Training ImageNetTE
+### 4.2. Producing Results by Training on ImageNetTE
 
 In the first step, the model implemented in PyTorch was trained on ImageNetTE. This is the most similar dataset to ImageNet, which was the dataset used in the original paper [[1]](#1)). More precisely, it is a subset containing 10 classes of the original ImageNet dataset [[4]](#4). As it is not integrated into the PyTorch datasets, the training and validation images were downloaded online [[4]](#4) and were inserted in the same folder as the Python file for training the EfficientNetV2-s model.
 
