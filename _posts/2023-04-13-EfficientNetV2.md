@@ -141,7 +141,8 @@ As was described in the previous subsection, in this reproducibility project an 
 In the repository provided (a link to the GitHub repository was given in the paper [[1]](#1), a tutorial was given on how to run the different types of the EfficientNet model with the files provided in the repository. In this tutorial, the model EfficientNet-B0 is finetuned. As a first step, it was therefore tried to run this tutorial. When strictly running what was given in the tutorial, training of the model was initialized and started running. Special attention was given to the Top-1 and Top-5 accuracy. In the first 56 of 781 training epochs, the Top-1 accuracy was observed to stay below 15% and the Top-5 accuracy varied between 45% and 55% but did not exceed 55%. It even decreased again for multiple epochs. The final line obtained can be seen below.
 
 ```tsql
-56/781 [=>............................] - ETA: 149:30:16 - loss: 3.2239 - acc_top1: 0.1239 - acc_top5: 0.5413
+56/781 [=>............................] \
+- ETA: 149:30:16 - loss: 3.2239 - acc_top1: 0.1239 - acc_top5: 0.5413
 ```
 
 Unfortunately, after running the code for nearly 1 day, it crashed. The computing power of a single computer was seen to not be sufficient to train the model in a reasonable timeframe. Attempts to run it in the Google Cloud were unfortunately not successful. However, the results shown above were not convincing of achieving the same performance as provided in the paper for EfficientNet-B0. In the paper, all accuracies (Top-1 and Top-5) were higher than 78%. The results obtained in the first epochs of finetuning were not suggesting, that similar performances could have been obtained. However, this can be related to the fact that finetuning could not be finished, to an unideal checkpoint, or to mistakes made while running the code, even if the tutorial was not altered and just run as given.
@@ -257,7 +258,8 @@ Finally, the train and test statistics are printed for the user to check the pro
     val_loss /= len(test_loader.dataset)
     val_acc = 100.0 * val_correct / len(test_loader.dataset)
     
-    print(f'Epoch {epoch+1}/{num_epochs}, Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%, Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%')
+    print(f'Epoch {epoch+1}/{num_epochs}, Train Loss: {train_loss:.4f}, Train Acc: \
+    {train_acc:.2f}%, Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%')
 ```
 
 ### 4.2. Producing Results by Training on ImageNetTE
@@ -283,8 +285,10 @@ transform = transforms.Compose([
 Finally, from the downloaded images, the training and testing dataset needed to be created. This was done as follows, by searching for the images in the download folder and by applying the transform which was defined before.
 
 ```tsql
-train_dataset = ImageFolder(root='./data/imagenette2-160/train', transform=transform)
-test_dataset = ImageFolder(root='./data/imagenette2-160/val', transform=transform)
+train_dataset = ImageFolder(root='./data/imagenette2-160/train',\
+            transform=transform)
+test_dataset = ImageFolder(root='./data/imagenette2-160/val',
+           transform=transform)
 ```
 
 Having implemented the ImageNetTE dataset, training was now performed with different datasets and batch sizes. Unfortunately, it was not possible to run it on the entire dataset, as this took more than a night for only one epoch. Therefore, it was decided to train on several subset sizes of the full dataset, in order to understand the influence of the size of the dataset and to draw conclusions from that.
@@ -310,8 +314,10 @@ The results (especially the increasing loss for higher dataset sizes) suggest th
 As a new dataset, the FashionMNIST was chosen as it is a popular and rather lightweight model. Firstly, the datasets are obtained from torchvision's dataset and loaded into the program. For instance, FashionMNIST is loaded as follows (the implementation is inspired from [[7]](#7)):
 
 ```tsql
-train_dataset = FashionMNIST(root='./data', train=True, download=True, transform=transform)
-test_dataset = FashionMNIST(root='./data', train=False, download=True, transform=transform)
+train_dataset = FashionMNIST(root='./data', train=True,
+                download=True, transform=transform)
+test_dataset = FashionMNIST(root='./data', train=False, 
+                download=True, transform=transform)
 ```
 
 For the sake of visualization, only two classes from FashionMNIST are plotted. Firstly, selecting the indices for the second and third class from the targets of the train and test data sets:
@@ -385,7 +391,8 @@ To make images from different datasets compatible with the EfficientNetV2 class,
 # Define the transformation pipeline
 transform = transforms.Compose([
     transforms.Resize(224), # resize the image to 224x224
-    transforms.Grayscale(num_output_channels=3), # convert the image to RGB format
+     # convert the image to RGB format
+    transforms.Grayscale(num_output_channels=3),
     transforms.ToTensor(), # convert the image to a PyTorch tensor
 ])
 ```
