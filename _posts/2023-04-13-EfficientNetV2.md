@@ -141,7 +141,7 @@ As was described in the previous subsection, in this reproducibility project an 
 In the repository provided (a link to the GitHub repository was given in the paper [[1]](#1), a tutorial was given on how to run the different types of the EfficientNet model with the files provided in the repository. In this tutorial, the model EfficientNet-B0 is finetuned. As a first step, it was therefore tried to run this tutorial. When strictly running what was given in the tutorial, training of the model was initialized and started running. Special attention was given to the Top-1 and Top-5 accuracy. In the first 56 of 781 training epochs, the Top-1 accuracy was observed to stay below 15% and the Top-5 accuracy varied between 45% and 55% but did not exceed 55%. It even decreased again for multiple epochs. The final line obtained can be seen below.
 
 ```tsql
-56/781 [=>............................] \
+56/781 [=>............................] 
 - ETA: 149:30:16 - loss: 3.2239 - acc_top1: 0.1239 - acc_top5: 0.5413
 ```
 
@@ -258,8 +258,11 @@ Finally, the train and test statistics are printed for the user to check the pro
     val_loss /= len(test_loader.dataset)
     val_acc = 100.0 * val_correct / len(test_loader.dataset)
     
-    print(f'Epoch {epoch+1}/{num_epochs}, Train Loss: {train_loss:.4f}, Train Acc: \
-    {train_acc:.2f}%, Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%')
+    print(f'Epoch {epoch+1}/{num_epochs}, 
+    Train Loss: {train_loss:.4f},
+    Train Acc: {train_acc:.2f}%,
+    Val Loss: {val_loss:.4f}, 
+    Val Acc: {val_acc:.2f}%')
 ```
 
 ### 4.2. Producing Results by Training on ImageNetTE
