@@ -7,7 +7,7 @@ The paper “EfficientNetV2: Smaller Models and Faster Training“ [[1]](#1) was
 
 As this paper introduced such a powerful architecture, the goal of this blog post is to briefly present the paper, as well as our attempt to reproduce several claims from the paper, as well as some ablation studies, to test the impact of the adaptive regularization and the new building block MBFused. A reproduction can be valuable, as it can potentially hint erors in the implementation, in the analysis or could show if there is possible room for improvement. Furthermore, it allows to understand the code better and can be a basis to build further research upon. Initially, it was tried to reproduce the results of the paper as well as to adapt the original code provided by the authors in TensorFlow. However, due to computational complexity and compatibility issues, it was not possible to obtain results with TensorFlow. Therefore, an alternative implementation of the code was created within PyTorch. Overall, the code and the results however proved to be hard to be reproduced.
 
-The blog post is structured as follows: First, the most important achievements of the paper will be presented. Subsequently, the TensorFlow implementation is discussed and the changes to the provided code are presented. After explaining why it was unfortunately not possible to achieve results with the TensorFlow implementation, the implementation in PyTorch is presented and the results obtained are outlined. Finally, a final discussion of the reproducibility of the paper is given.
+The blog post is structured as follows: First, the most important achievements of the paper will be presented. Subsequently, the TensorFlow implementation is discussed and the changes to the provided code are presented. After explaining why it was unfortunately not possible to achieve results with the TensorFlow implementation, the implementation in PyTorch is presented and the results obtained are outlined. Finally, a final discussion of the reproducibility of the paper is given. In order to create the blog post, a general template [[8]](#8) was used.
  
 
 ## 2. Theoretical Background and Summary of the Paper
@@ -515,4 +515,9 @@ https://arxiv.org/abs/1807.03341
 pytorch.org. 
 torchvision. 
 Retrieved on 16th April 2023 from https://pytorch.org/vision/stable/index.html.
+
+<a id="8">[8]</a> 
+chadbaldwin. 
+Create a new repository from simple-blog-bootstrap. 
+Retrieved on 14th April 2023 from https://github.com/chadbaldwin/simple-blog-bootstrap/generate.
 
