@@ -78,9 +78,12 @@ class FashionMNISTInput(CIFAR10Input):
           num_classes=10,
           tfds_name='fashion_mnist',
           splits=dict(
-              train=dict(num_images=60000, tfds_split='train', slice=''),
-              minival=dict(num_images=10000, tfds_split='test', slice=''),
-              eval=dict(num_images=10000, tfds_split='test', slice=''),
+              train=dict(num_images=60000, tfds_split='train',
+              slice=''),
+              minival=dict(num_images=10000, tfds_split='test',
+              slice=''),
+              eval=dict(num_images=10000, tfds_split='test',
+              slice=''),
           )))
 ```
 
@@ -122,7 +125,8 @@ Next to that, also the adaptive regularization would need to be removed. Regular
 
 ```tsql
 weight_decay_inc = config.train.weight_decay_inc * (
-    tf.cast(global_step, tf.float32) / tf.cast(train_steps, tf.float32))
+    tf.cast(global_step, tf.float32) /
+    tf.cast(train_steps, tf.float32))
 weight_decay = (1 + weight_decay_inc) * config.train.weight_decay
 ```
 
@@ -142,7 +146,7 @@ In the repository provided (a link to the GitHub repository was given in the pap
 
 ```tsql
 56/781 [=>............................] 
-- ETA: 149:30:16 - loss: 3.2239 - acc_top1: 0.1239 - acc_top5: 0.5413
+-ETA: 149:30:16-loss:3.2239-acc_top1:0.1239-acc_top5:0.5413
 ```
 
 Unfortunately, after running the code for nearly 1 day, it crashed. The computing power of a single computer was seen to not be sufficient to train the model in a reasonable timeframe. Attempts to run it in the Google Cloud were unfortunately not successful. However, the results shown above were not convincing of achieving the same performance as provided in the paper for EfficientNet-B0. In the paper, all accuracies (Top-1 and Top-5) were higher than 78%. The results obtained in the first epochs of finetuning were not suggesting, that similar performances could have been obtained. However, this can be related to the fact that finetuning could not be finished, to an unideal checkpoint, or to mistakes made while running the code, even if the tutorial was not altered and just run as given.
@@ -347,8 +351,8 @@ test_dataset = Subset(train_dataset, range(16))
 Data is loaded using a DataLoader, by setting a batch size and the shuffle boolean:
 ```tsql
 # Create data loaders
-train_loader = DataLoader(train_dataset, batch_size=8, shuffle=False)
-test_loader = DataLoader(train_dataset, batch_size=8, shuffle=False)
+train_loader=DataLoader(train_dataset, batch_size=8, shuffle=False)
+test_loader=DataLoader(train_dataset, batch_size=8, shuffle=False)
 ```
 
 In order to decode the labels to actual clothing pieces, the following dictionary is used:
