@@ -288,7 +288,7 @@ transform = transforms.Compose([
 Finally, from the downloaded images, the training and testing dataset needed to be created. This was done as follows, by searching for the images in the download folder and by applying the transform which was defined before.
 
 ```tsql
-train_dataset = ImageFolder(root='./data/imagenette2-160/train',\
+train_dataset = ImageFolder(root='./data/imagenette2-160/train',
             transform=transform)
 test_dataset = ImageFolder(root='./data/imagenette2-160/val',
            transform=transform)
